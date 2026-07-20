@@ -77,8 +77,8 @@ function SubmitJob() {
     setSubmitting(true);
     try {
       const { data: jobId, error } = await supabase.rpc("submit_job", {
-        p_job_reference: jobReference || null,
-        p_po_number: poNumber || null,
+        p_job_reference: jobReference || "",
+        p_po_number: poNumber || "",
         p_notify_email: notifyEmail,
         p_job_type: jobType,
         p_service: service,
@@ -90,7 +90,7 @@ function SubmitJob() {
         p_output_vector: outputVector,
         p_output_raster: outputRaster,
         p_output_other: outputOther,
-        p_instructions: instructions || null,
+        p_instructions: instructions || "",
         p_credits_cost: credits,
       });
       if (error) throw error;

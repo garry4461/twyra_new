@@ -6,11 +6,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession, isStaff } from "@/lib/session";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { STATUS_LABEL, STATUS_COLOR, JOB_TYPES } from "@/lib/domain";
 import { format } from "date-fns";
+
+type JobStatus = "submitted" | "under_production" | "in_review" | "completed" | "revision_requested";
 
 export const Route = createFileRoute("/_authenticated/jobs/$id")({
   component: JobDetail,
@@ -77,7 +80,7 @@ function JobDetail() {
 
   async function saveStaff() {
     const { error } = await supabase.from("jobs").update({
-      status: newStatus as JobRow["status"], admin_notes: notes,
+      status: newStatus as JobStatus, admin_notes: notes,
       completed_at: newStatus === "completed" ? new Date().toISOString() : null,
     }).eq("id", id);
     if (error) { toast.error(error.message); return; }
