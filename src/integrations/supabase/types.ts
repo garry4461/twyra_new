@@ -14,16 +14,263 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      credit_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          job_id: string | null
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          job_id?: string | null
+          reason: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          job_id?: string | null
+          reason?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_transactions_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_files: {
+        Row: {
+          created_at: string
+          file_name: string
+          id: string
+          job_id: string
+          kind: string
+          size_bytes: number | null
+          storage_path: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          id?: string
+          job_id: string
+          kind?: string
+          size_bytes?: number | null
+          storage_path: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          id?: string
+          job_id?: string
+          kind?: string
+          size_bytes?: number | null
+          storage_path?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_files_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          additional_bw: boolean
+          admin_notes: string | null
+          authorize_extra: boolean
+          color_scheme: string
+          color_separations: boolean
+          completed_at: string | null
+          created_at: string
+          credits_used: number
+          customer_id: string
+          id: string
+          instructions: string | null
+          job_reference: string | null
+          job_type: number
+          need_quote: boolean
+          notify_email: string
+          output_other: string
+          output_raster: string
+          output_vector: string
+          po_number: string | null
+          service: string
+          status: Database["public"]["Enums"]["job_status"]
+          updated_at: string
+        }
+        Insert: {
+          additional_bw?: boolean
+          admin_notes?: string | null
+          authorize_extra?: boolean
+          color_scheme: string
+          color_separations?: boolean
+          completed_at?: string | null
+          created_at?: string
+          credits_used?: number
+          customer_id: string
+          id?: string
+          instructions?: string | null
+          job_reference?: string | null
+          job_type: number
+          need_quote?: boolean
+          notify_email: string
+          output_other: string
+          output_raster: string
+          output_vector: string
+          po_number?: string | null
+          service: string
+          status?: Database["public"]["Enums"]["job_status"]
+          updated_at?: string
+        }
+        Update: {
+          additional_bw?: boolean
+          admin_notes?: string | null
+          authorize_extra?: boolean
+          color_scheme?: string
+          color_separations?: boolean
+          completed_at?: string | null
+          created_at?: string
+          credits_used?: number
+          customer_id?: string
+          id?: string
+          instructions?: string | null
+          job_reference?: string | null
+          job_type?: number
+          need_quote?: boolean
+          notify_email?: string
+          output_other?: string
+          output_raster?: string
+          output_vector?: string
+          po_number?: string | null
+          service?: string
+          status?: Database["public"]["Enums"]["job_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          company: string | null
+          created_at: string
+          credits_balance: number
+          email: string | null
+          full_name: string | null
+          id: string
+          plan_type: Database["public"]["Enums"]["plan_type"]
+          updated_at: string
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          credits_balance?: number
+          email?: string | null
+          full_name?: string | null
+          id: string
+          plan_type?: Database["public"]["Enums"]["plan_type"]
+          updated_at?: string
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          credits_balance?: number
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          plan_type?: Database["public"]["Enums"]["plan_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      revisions: {
+        Row: {
+          created_at: string
+          id: string
+          job_id: string
+          message: string
+          requested_by: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_id: string
+          message: string
+          requested_by: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_id?: string
+          message?: string
+          requested_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revisions_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "customer" | "admin" | "production" | "qa"
+      job_status:
+        | "submitted"
+        | "under_production"
+        | "in_review"
+        | "completed"
+        | "revision_requested"
+      plan_type: "credit" | "unlimited_monthly" | "none"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +397,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["customer", "admin", "production", "qa"],
+      job_status: [
+        "submitted",
+        "under_production",
+        "in_review",
+        "completed",
+        "revision_requested",
+      ],
+      plan_type: ["credit", "unlimited_monthly", "none"],
+    },
   },
 } as const
