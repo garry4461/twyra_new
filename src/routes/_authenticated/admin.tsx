@@ -139,8 +139,7 @@ function Admin() {
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="production">Production</SelectItem>
-                    <SelectItem value="qa">QA</SelectItem>
+                    <SelectItem value="production">Designer</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
