@@ -25,16 +25,6 @@ function SubmitJob() {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
 
-  const isStaffUser = session.roles.some((r) => r === "admin" || r === "production" || r === "qa");
-  if (!session.loading && isStaffUser) {
-    return (
-      <Card className="p-8 text-center">
-        <h2 className="text-xl font-semibold mb-2">Not available for your role</h2>
-        <p className="text-muted-foreground">Only customers can submit jobs. Switch to a customer account to submit artwork requests.</p>
-      </Card>
-    );
-  }
-
   const [jobType, setJobType] = useState<number>(1);
   const [service, setService] = useState<string>("");
   const [needQuote, setNeedQuote] = useState(false);
@@ -51,9 +41,19 @@ function SubmitJob() {
   const [instructions, setInstructions] = useState("");
   const [files, setFiles] = useState<File[]>([]);
 
+  const isStaffUser = session.roles.some((r) => r === "admin" || r === "production" || r === "qa");
   const isUnlimited = session.profile?.plan_type === "unlimited_monthly";
   const credits = creditsFor(jobType);
   const insufficient = !isUnlimited && (session.profile?.credits_balance ?? 0) < credits;
+
+  if (!session.loading && isStaffUser) {
+    return (
+      <Card className="p-8 text-center">
+        <h2 className="text-xl font-semibold mb-2">Not available for your role</h2>
+        <p className="text-muted-foreground">Only customers can submit jobs. Switch to a customer account to submit artwork requests.</p>
+      </Card>
+    );
+  }
 
   const handleFiles = (list: FileList | null) => {
     if (!list) return;
