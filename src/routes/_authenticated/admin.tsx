@@ -82,8 +82,8 @@ function Admin() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Admin console</h1>
-        <p className="text-muted-foreground">Manage jobs, users and credits.</p>
+        <h1 className="text-3xl font-bold">{isAdmin ? "Admin console" : "Jobs queue"}</h1>
+        <p className="text-muted-foreground">{isAdmin ? "Manage jobs, users and credits." : "Pick up jobs, update status and upload completed files."}</p>
       </div>
 
       <Card>

@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Palette, LogOut, LayoutDashboard, FileUp, ShieldCheck, User as UserIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSession, isStaff } from "@/lib/session";
+import { useSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -34,13 +34,17 @@ function AuthedLayout() {
     );
   }
 
-  const staff = isStaff(session.roles);
+  const isAdmin = session.roles.includes("admin");
+  const isDesigner = session.roles.includes("production") || session.roles.includes("qa");
+  const isCustomer = !isAdmin && !isDesigner;
+
   const nav = [
-    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { to: "/submit", label: "Submit Job", icon: FileUp },
-    { to: "/account", label: "Account", icon: UserIcon },
-    ...(staff ? [{ to: "/admin", label: "Admin", icon: ShieldCheck }] : []),
-  ] as const;
+    ...(isCustomer || isAdmin ? [{ to: "/dashboard" as const, label: "Dashboard", icon: LayoutDashboard }] : []),
+    ...(isCustomer ? [{ to: "/submit" as const, label: "Submit Job", icon: FileUp }] : []),
+    ...(isDesigner && !isAdmin ? [{ to: "/admin" as const, label: "Jobs", icon: FileUp }] : []),
+    { to: "/account" as const, label: "Account", icon: UserIcon },
+    ...(isAdmin ? [{ to: "/admin" as const, label: "Admin", icon: ShieldCheck }] : []),
+  ];
 
   return (
     <div className="min-h-screen bg-muted/30">
