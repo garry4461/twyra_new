@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { FileText, Plus, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,7 +41,12 @@ function Dashboard() {
   }, [session.user]);
 
   const isUnlimited = session.profile?.plan_type === "unlimited_monthly";
-  const isCustomer = !session.roles.some((r) => r === "admin" || r === "production" || r === "qa");
+  const isAdmin = session.roles.includes("admin");
+  const isDesigner = session.roles.some((r) => r === "production" || r === "qa");
+  const isCustomer = !isAdmin && !isDesigner;
+
+  if (isDesigner && !isAdmin) return <Navigate to="/admin" replace />;
+
 
   return (
     <div className="space-y-6">
