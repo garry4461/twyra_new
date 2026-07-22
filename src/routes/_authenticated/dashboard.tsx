@@ -41,6 +41,7 @@ function Dashboard() {
   }, [session.user]);
 
   const isUnlimited = session.profile?.plan_type === "unlimited_monthly";
+  const isCustomer = !session.roles.some((r) => r === "admin" || r === "production" || r === "qa");
 
   return (
     <div className="space-y-6">
@@ -49,7 +50,7 @@ function Dashboard() {
           <h1 className="text-3xl font-bold">Welcome back{session.profile?.full_name ? `, ${session.profile.full_name.split(" ")[0]}` : ""}</h1>
           <p className="text-muted-foreground">Manage your artwork jobs and credits.</p>
         </div>
-        <Link to="/submit"><Button size="lg"><Plus className="h-4 w-4 mr-2" /> New job</Button></Link>
+        {isCustomer && <Link to="/submit"><Button size="lg"><Plus className="h-4 w-4 mr-2" /> New job</Button></Link>}
       </div>
 
       <div className="grid md:grid-cols-3 gap-4">
