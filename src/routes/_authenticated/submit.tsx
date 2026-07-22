@@ -25,6 +25,16 @@ function SubmitJob() {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
 
+  const isStaffUser = session.roles.some((r) => r === "admin" || r === "production" || r === "qa");
+  if (!session.loading && isStaffUser) {
+    return (
+      <Card className="p-8 text-center">
+        <h2 className="text-xl font-semibold mb-2">Not available for your role</h2>
+        <p className="text-muted-foreground">Only customers can submit jobs. Switch to a customer account to submit artwork requests.</p>
+      </Card>
+    );
+  }
+
   const [jobType, setJobType] = useState<number>(1);
   const [service, setService] = useState<string>("");
   const [needQuote, setNeedQuote] = useState(false);
