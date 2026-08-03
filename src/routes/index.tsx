@@ -117,10 +117,15 @@ function SiteHeader() {
             </a>
           ))}
         </nav>
-        <div className="hidden md:block">
-          <Button asChild className="bg-brand text-brand-foreground hover:bg-brand/90 shadow-sm">
-            <a href="#dashboard">Client Dashboard</a>
-          </Button>
+        <div className="hidden gap-2 md:flex">
+          <Link to="/auth">
+            <Button variant="ghost">Sign in</Button>
+          </Link>
+          <Link to="/auth">
+            <Button className="bg-brand text-brand-foreground hover:bg-brand/90 shadow-sm">
+              Client Dashboard
+            </Button>
+          </Link>
         </div>
         <button
           onClick={() => setOpen((o) => !o)}
@@ -147,9 +152,11 @@ function SiteHeader() {
                 {n.label}
               </a>
             ))}
-            <Button asChild className="mt-2 bg-brand text-brand-foreground hover:bg-brand/90">
-              <a href="#dashboard">Client Dashboard</a>
-            </Button>
+            <Link to="/auth" onClick={() => setOpen(false)}>
+              <Button className="mt-2 w-full bg-brand text-brand-foreground hover:bg-brand/90">
+                Client Dashboard
+              </Button>
+            </Link>
           </div>
         </div>
       )}
