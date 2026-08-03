@@ -295,10 +295,19 @@ function CreditModel() {
     [simpleVector, complexVector, simpleDigitizing, complexDigitizing],
   );
 
+  const estCost = useMemo(
+    () => Math.round(totalCredits * (totalCredits <= 10 ? 9.9 : 7.98)),
+    [totalCredits],
+  );
+
+  const goMonthly = estCost > 399;
+
   const suggested = useMemo(() => {
+    if (goMonthly) return { name: "Unlimited Monthly", price: estCost };
     if (totalCredits <= 10) return { name: "Starter Pack", credits: 10, price: 99 };
     return { name: "Growth Pack", credits: 50, price: 399 };
-  }, [totalCredits]);
+  }, [totalCredits, goMonthly, estCost]);
+
 
   return (
     <section id="credits" className="py-16 sm:py-24">
@@ -369,9 +378,25 @@ function CreditModel() {
             <div className="mt-7 grid grid-cols-2 gap-4 rounded-2xl bg-surface-muted p-4 sm:grid-cols-3 sm:p-5">
               <Stat label="Total Credits" value={`${totalCredits}`} />
               <Stat label="Recommended" value={suggested.name} />
-              <Stat label="Pack Price" value={`£${suggested.price}`} accent />
+              <Stat label="Est. Spend" value={`£${estCost}`} accent />
             </div>
+
+            {goMonthly && (
+              <div className="mt-4 rounded-2xl border-2 border-highlight bg-highlight/10 p-4 text-sm sm:p-5">
+                <p className="font-bold text-foreground">
+                  You&apos;re above £399 — switch to the Unlimited Monthly plan
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+                  At this volume a monthly subscription costs less than buying credit packs, with
+                  unlimited requests and no per-job charges.
+                </p>
+                <Button asChild className="mt-4 rounded-xl">
+                  <a href="#pricing">See monthly plans</a>
+                </Button>
+              </div>
+            )}
           </div>
+
 
           {/* Credit packs */}
           <div className="grid gap-5">
