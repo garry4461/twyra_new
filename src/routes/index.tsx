@@ -8,7 +8,6 @@ import {
   Clock,
   Layers,
   Megaphone,
-  MessageSquare,
   Package,
   Palette,
   PenTool,
