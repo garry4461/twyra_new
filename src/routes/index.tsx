@@ -295,10 +295,19 @@ function CreditModel() {
     [simpleVector, complexVector, simpleDigitizing, complexDigitizing],
   );
 
+  const estCost = useMemo(
+    () => Math.round(totalCredits * (totalCredits <= 10 ? 9.9 : 7.98)),
+    [totalCredits],
+  );
+
+  const goMonthly = estCost > 399;
+
   const suggested = useMemo(() => {
+    if (goMonthly) return { name: "Unlimited Monthly", price: estCost };
     if (totalCredits <= 10) return { name: "Starter Pack", credits: 10, price: 99 };
     return { name: "Growth Pack", credits: 50, price: 399 };
-  }, [totalCredits]);
+  }, [totalCredits, goMonthly, estCost]);
+
 
   return (
     <section id="credits" className="py-16 sm:py-24">
