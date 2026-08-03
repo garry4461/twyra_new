@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState, type ComponentType } from "react";
 import {
   ArrowRight,
@@ -37,16 +37,28 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
+
+const TITLE = "ArtworkGuru — Vector Art & Embroidery Digitizing Portal";
+const DESCRIPTION =
+  "Unlimited design for print & merch companies. Vector art, digitizing and mockups in 12–24 hours with monthly plans or FlexCredits.";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
 });
 
 function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
-      <Toaster position="top-center" richColors />
       <SiteHeader />
       <main>
         <Hero />
