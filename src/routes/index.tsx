@@ -64,7 +64,6 @@ function LandingPage() {
         <Hero />
         <TrustBar />
         <HowItWorks />
-        <Features />
         <Pricing />
         <CreditModel />
         <Testimonials />
@@ -270,68 +269,6 @@ function TrustBar() {
         </div>
       </div>
     </div>
-  );
-}
-
-/* -------------------------- Features -------------------------- */
-
-function Features() {
-  const features = [
-    {
-      icon: Palette,
-      title: "Pixel-Perfect Vector Art",
-      desc: "Clean, scalable SVG/AI/EPS files ready for print, screens, and embroidery.",
-    },
-    {
-      icon: Zap,
-      title: "Fast Turnaround",
-      desc: "Most jobs delivered in under 24 hours — with 4-hour rush available.",
-    },
-    {
-      icon: Users,
-      title: "Dedicated Designers",
-      desc: "A specialist assigned to your brand's queue for consistent quality.",
-    },
-    {
-      icon: MessageSquare,
-      title: "Direct Chat",
-      desc: "Message your designer in-app. No email threads, no back-and-forth.",
-    },
-    {
-      icon: Sparkles,
-      title: "Unlimited Revisions",
-      desc: "We iterate until it's perfect. Credits only charge on final approval.",
-    },
-    {
-      icon: Clock,
-      title: "Always Available",
-      desc: "Global team means your queue keeps moving while you sleep.",
-    },
-  ];
-  return (
-    <section className="bg-surface-muted py-20 sm:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeader
-          eyebrow="Everything you need"
-          title="A design partner built for print & merch"
-          subtitle="One workflow for vector art, digitizing, and mockups — priced in transparent credits."
-        />
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f) => (
-            <div
-              key={f.title}
-              className="group rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-soft text-brand transition group-hover:bg-brand group-hover:text-brand-foreground">
-                <f.icon className="h-5 w-5" />
-              </div>
-              <h3 className="mt-5 text-base font-bold">{f.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
   );
 }
 
