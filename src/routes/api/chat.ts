@@ -58,7 +58,7 @@ export const Route = createFileRoute("/api/chat")({
         const result = streamText({
           model: gateway("google/gemini-3.6-flash"),
           system: SYSTEM_PROMPT,
-          messages: convertToModelMessages(messages),
+          messages: await convertToModelMessages(messages),
           stopWhen: stepCountIs(50),
           tools: {
             capture_contact: tool({
