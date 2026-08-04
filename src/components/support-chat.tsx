@@ -157,8 +157,12 @@ export function SupportChat() {
                 return (
                   <Message from={message.role} key={message.id}>
                     <MessageContent
-                      variant={message.role === "user" ? "contained" : "flat"}
-                      className="text-sm"
+                      className={cn(
+                        "text-sm",
+                        message.role === "user"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-transparent p-0 text-foreground",
+                      )}
                     >
                       {text ? <MessageResponse>{text}</MessageResponse> : null}
                       {savedLead ? (
