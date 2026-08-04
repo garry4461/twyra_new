@@ -230,6 +230,33 @@ export type Database = {
           },
         ]
       }
+      support_leads: {
+        Row: {
+          created_at: string
+          email: string
+          handled: boolean
+          id: string
+          name: string | null
+          question: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          handled?: boolean
+          id?: string
+          name?: string | null
+          question: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          handled?: boolean
+          id?: string
+          name?: string | null
+          question?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

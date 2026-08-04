@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
+import { SupportChat } from "@/components/support-chat";
 
 function NotFoundComponent() {
   return (
@@ -106,6 +107,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <SupportChat />
       <Toaster richColors position="top-right" />
     </QueryClientProvider>
   );
