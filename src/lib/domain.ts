@@ -1,14 +1,34 @@
 export const JOB_TYPES = [
-  { id: 1, label: "Job Type 1 (Logo w/ Text)", credits: 5, tat: "Next Day / Same Day" },
-  { id: 2, label: "Job Type 2 (Design Layout)", credits: 7, tat: "Next Day / Same Day" },
-  { id: 3, label: "Job Type 3 (Complex artwork)", credits: 10, tat: "Next Day / Same Day" },
-  { id: 4, label: "Job Type 4 (Custom artwork)", credits: 15, tat: "1-2 Business Days" },
+  { id: 1, label: "Job Type 1 (Simple Vector)", credits: 1, tat: "Next Day / Same Day" },
+  { id: 2, label: "Job Type 2 (Medium Vector)", credits: 2, tat: "Next Day / Same Day" },
+  { id: 3, label: "Job Type 3 (Complex Vector)", credits: 4, tat: "2-3 Business Days" },
+  { id: 4, label: "Job Type 4 (Custom Vector)", credits: 4, tat: "2-3 Business Days" },
+] as const;
+
+export const DIGITIZING_TYPES = [
+  { id: 1, label: "Simple Digitizing (up to 10k stitches)", credits: 2, tat: "Next Day / Same Day" },
+  { id: 2, label: "Complex Digitizing (10k+ stitches / detailed)", credits: 4, tat: "2-3 Business Days" },
+] as const;
+
+export const DIGITIZING_FORMATS = [".dst", ".emb", ".Taji", ".exp", ".pxf", "Other"] as const;
+
+export const DIGITIZING_PRODUCTS = [
+  "Cap / Hat",
+  "Polo Shirt",
+  "T-Shirt",
+  "Jacket",
+  "Bag",
+  "Towel",
+  "Patch",
+  "Other",
 ] as const;
 
 export const SERVICES = [
-  { id: "next_day", label: "Next Day - £ 0.00" },
-  { id: "same_day", label: "Same Day - £ 0.00" },
+  { id: "next_day", label: "Next Day" },
+  { id: "same_day", label: "Same Day" },
+  { id: "standard", label: "Standard (2-3 Business Days)" },
 ] as const;
+
 
 export const COLOR_SCHEMES = [
   "Black & White",
