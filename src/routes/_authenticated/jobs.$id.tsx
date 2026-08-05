@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { STATUS_LABEL, STATUS_COLOR, JOB_TYPES } from "@/lib/domain";
+import { STATUS_LABEL, STATUS_COLOR, jobTypeLabel } from "@/lib/domain";
 import { format } from "date-fns";
 
 type JobStatus = "submitted" | "under_production" | "in_review" | "completed" | "revision_requested";
@@ -114,7 +114,7 @@ function JobDetail() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">{job.job_reference || `Job ${job.id.slice(0, 8)}`}</h1>
-          <p className="text-muted-foreground">{JOB_TYPES.find(t => t.id === job.job_type)?.label} · Submitted {format(new Date(job.created_at), "PP")}</p>
+          <p className="text-muted-foreground">{jobTypeLabel(job.job_type, (job as { job_category?: string }).job_category)} · Submitted {format(new Date(job.created_at), "PP")}</p>
         </div>
         <span className={`text-sm px-3 py-1.5 rounded-full border ${STATUS_COLOR[job.status]}`}>{STATUS_LABEL[job.status]}</span>
       </div>

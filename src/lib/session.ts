@@ -14,8 +14,10 @@ export interface SessionState {
     company: string | null;
     email: string | null;
     plan_type: "credit" | "unlimited_monthly" | "none";
+    plan_name: string | null;
     credits_balance: number;
   } | null;
+
 }
 
 export function useSession(): SessionState & { refresh: () => Promise<void> } {

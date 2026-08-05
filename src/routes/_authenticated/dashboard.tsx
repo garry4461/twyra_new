@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { STATUS_LABEL, STATUS_COLOR, JOB_TYPES } from "@/lib/domain";
+import { STATUS_LABEL, STATUS_COLOR, jobTypeLabel, planLabel } from "@/lib/domain";
 import { formatDistanceToNow } from "date-fns";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -30,7 +30,7 @@ function Dashboard() {
     if (!session.user) return;
     supabase
       .from("jobs")
-      .select("id, job_reference, job_type, status, credits_used, created_at")
+      .select("id, job_reference, job_type, job_category, status, credits_used, created_at")
       .eq("customer_id", session.user.id)
       .order("created_at", { ascending: false })
       .limit(20)
@@ -64,17 +64,19 @@ function Dashboard() {
           {isUnlimited ? (
             <>
               <div className="text-2xl font-bold mt-1 flex items-center gap-2">
-                <Zap className="h-5 w-5 text-primary" /> Unlimited Monthly
+                <Zap className="h-5 w-5 text-primary" /> {planLabel(session.profile?.plan_type, session.profile?.plan_name)}
               </div>
-              <div className="text-sm text-muted-foreground mt-2">Submit unlimited jobs across all types.</div>
+              <div className="text-sm text-muted-foreground mt-2">Unlimited monthly — submit unlimited jobs across all types.</div>
             </>
           ) : (
             <>
-              <div className="text-2xl font-bold mt-1">{session.profile?.credits_balance ?? 0} credits</div>
-              <div className="text-sm text-muted-foreground mt-2">Type 1 = 5 · Type 2 = 7 · Type 3 = 10 · Type 4 = 15</div>
+              <div className="text-lg font-semibold mt-1">{planLabel(session.profile?.plan_type, session.profile?.plan_name, session.profile?.credits_balance ?? 0)}</div>
+              <div className="text-2xl font-bold">{session.profile?.credits_balance ?? 0} credits</div>
+              <div className="text-sm text-muted-foreground mt-2">Simple Vector = 1 · Medium = 2 · Complex/Custom = up to 4 · Digitizing = 2–4</div>
             </>
           )}
         </Card>
+
         <Card className="p-6">
           <div className="text-sm text-muted-foreground">Jobs submitted</div>
           <div className="text-2xl font-bold mt-1">{jobs.length}</div>
@@ -105,7 +107,7 @@ function Dashboard() {
                 <div className="flex-1">
                   <div className="font-medium">{j.job_reference || `Job ${j.id.slice(0, 8)}`}</div>
                   <div className="text-xs text-muted-foreground">
-                    {JOB_TYPES.find((t) => t.id === j.job_type)?.label} · {formatDistanceToNow(new Date(j.created_at), { addSuffix: true })}
+                    {jobTypeLabel(j.job_type, (j as { job_category?: string }).job_category)} · {formatDistanceToNow(new Date(j.created_at), { addSuffix: true })}
                   </div>
                 </div>
                 <div className="text-sm text-muted-foreground mr-4">{j.credits_used} cr</div>

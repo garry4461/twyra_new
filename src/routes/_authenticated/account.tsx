@@ -6,7 +6,7 @@ import { useSession } from "@/lib/session";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { format, formatDistanceToNow } from "date-fns";
-import { STATUS_LABEL, STATUS_COLOR, JOB_TYPES } from "@/lib/domain";
+import { STATUS_LABEL, STATUS_COLOR, jobTypeLabel, planLabel } from "@/lib/domain";
 
 export const Route = createFileRoute("/_authenticated/account")({
   component: Account,
@@ -28,7 +28,7 @@ function Account() {
     if (!session.user) return;
     if (isDesigner) {
       supabase.from("jobs")
-        .select("id, job_reference, job_type, status, created_at")
+        .select("id, job_reference, job_type, job_category, status, created_at")
         .in("status", ["submitted", "under_production", "in_review"])
         .order("created_at", { ascending: false })
         .limit(50)
@@ -91,7 +91,7 @@ function Account() {
                     <div className="flex-1">
                       <div className="font-medium">{j.job_reference || `Job ${j.id.slice(0, 8)}`}</div>
                       <div className="text-xs text-muted-foreground">
-                        {JOB_TYPES.find((t) => t.id === j.job_type)?.label} · {formatDistanceToNow(new Date(j.created_at), { addSuffix: true })}
+                        {jobTypeLabel(j.job_type, (j as { job_category?: string }).job_category)} · {formatDistanceToNow(new Date(j.created_at), { addSuffix: true })}
                       </div>
                     </div>
                     <span className={`text-xs px-2.5 py-1 rounded-full border ${STATUS_COLOR[j.status]}`}>{STATUS_LABEL[j.status]}</span>
@@ -112,15 +112,18 @@ function Account() {
                 <div className="text-sm text-muted-foreground">Current plan</div>
                 {isUnlimited ? (
                   <>
-                    <div className="text-xl font-bold">Unlimited Monthly</div>
-                    <p className="text-sm text-muted-foreground mt-1">You're on the Unlimited Monthly plan — submit as many jobs as you like across all types.</p>
+                    <div className="text-xl font-bold">{planLabel(session.profile?.plan_type, session.profile?.plan_name)}</div>
+                    <p className="text-sm text-muted-foreground mt-1">Unlimited monthly — submit as many jobs as you like across all types.</p>
                   </>
                 ) : (
                   <>
-                    <div className="text-xl font-bold">Credit Pack — {session.profile?.credits_balance ?? 0} credits available</div>
-                    <p className="text-sm text-muted-foreground mt-1">Type 1 = 5 · Type 2 = 7 · Type 3 = 10 · Type 4 = 15</p>
+                    <div className="text-xl font-bold">
+                      {planLabel(session.profile?.plan_type, session.profile?.plan_name, session.profile?.credits_balance ?? 0)} — {session.profile?.credits_balance ?? 0} credits available
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">Simple Vector = 1 · Medium Vector = 2 · Complex/Custom Vector = up to 4 · Simple Digitizing = 2 · Complex Digitizing = up to 4</p>
                   </>
                 )}
+
               </div>
             </div>
           </Card>

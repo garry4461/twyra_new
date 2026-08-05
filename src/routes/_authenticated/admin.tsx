@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { STATUS_LABEL, STATUS_COLOR, JOB_TYPES } from "@/lib/domain";
+import { STATUS_LABEL, STATUS_COLOR, jobTypeLabel } from "@/lib/domain";
 import { format } from "date-fns";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -37,7 +37,7 @@ function Admin() {
 
   const load = async () => {
     const [{ data: js }, { data: us }] = await Promise.all([
-      supabase.from("jobs").select("id, job_reference, job_type, status, created_at, customer_id, credits_used, notify_email").order("created_at", { ascending: false }).limit(100),
+      supabase.from("jobs").select("id, job_reference, job_type, job_category, status, created_at, customer_id, credits_used, notify_email").order("created_at", { ascending: false }).limit(100),
       supabase.from("profiles").select("id, email, full_name, plan_type, credits_balance").order("created_at", { ascending: false }),
     ]);
     setJobs((js ?? []) as JobRow[]);
@@ -105,7 +105,7 @@ function Admin() {
                 <div className="flex-1">
                   <div className="font-medium">{j.job_reference || `Job ${j.id.slice(0, 8)}`}</div>
                   <div className="text-xs text-muted-foreground">
-                    {user?.full_name || user?.email || "Unknown"} · {JOB_TYPES.find(t=>t.id===j.job_type)?.label} · {format(new Date(j.created_at), "PP")}
+                    {user?.full_name || user?.email || "Unknown"} · {jobTypeLabel(j.job_type, (j as { job_category?: string }).job_category)} · {format(new Date(j.created_at), "PP")}
                   </div>
                 </div>
                 <div className="text-sm text-muted-foreground mr-4">{j.credits_used} cr</div>

@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Upload, X, AlertTriangle } from "lucide-react";
+import { Upload, X, AlertTriangle, PenTool, Scissors, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  JOB_TYPES, SERVICES, COLOR_SCHEMES, OUTPUT_VECTOR, OUTPUT_RASTER, OUTPUT_OTHER, creditsFor,
+  JOB_TYPES, DIGITIZING_TYPES, DIGITIZING_FORMATS, DIGITIZING_PRODUCTS,
+  SERVICES, COLOR_SCHEMES, OUTPUT_VECTOR, OUTPUT_RASTER, OUTPUT_OTHER, creditsFor,
+  type JobCategory,
 } from "@/lib/domain";
 
 export const Route = createFileRoute("/_authenticated/submit")({
@@ -24,7 +26,9 @@ function SubmitJob() {
   const session = useSession();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [category, setCategory] = useState<JobCategory | null>(null);
 
+  // shared
   const [jobType, setJobType] = useState<number>(1);
   const [service, setService] = useState<string>("");
   const [needQuote, setNeedQuote] = useState(false);
@@ -32,19 +36,39 @@ function SubmitJob() {
   const [jobReference, setJobReference] = useState("");
   const [poNumber, setPoNumber] = useState("");
   const [notifyEmail, setNotifyEmail] = useState(session.profile?.email ?? "");
+  const [instructions, setInstructions] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+
+  // vector
   const [colorScheme, setColorScheme] = useState("");
   const [additionalBw, setAdditionalBw] = useState(false);
   const [colorSeparations, setColorSeparations] = useState(false);
   const [outputVector, setOutputVector] = useState("ai");
   const [outputRaster, setOutputRaster] = useState("jpg");
   const [outputOther, setOutputOther] = useState("not_required");
-  const [instructions, setInstructions] = useState("");
-  const [files, setFiles] = useState<File[]>([]);
+
+  // digitizing
+  const [formats, setFormats] = useState<string[]>([]);
+  const [product, setProduct] = useState("");
+  const [garmentType, setGarmentType] = useState("");
+  const [maxStitch, setMaxStitch] = useState("");
+  const [logoLocation, setLogoLocation] = useState("");
+  const [width, setWidth] = useState("");
+  const [height, setHeight] = useState("");
+  const [units, setUnits] = useState("inches");
+  const [colorRequirement, setColorRequirement] = useState("");
+  const [needSewOut, setNeedSewOut] = useState(false);
 
   const isStaffUser = session.roles.some((r) => r === "admin" || r === "production" || r === "qa");
   const isUnlimited = session.profile?.plan_type === "unlimited_monthly";
-  const credits = creditsFor(jobType);
+  const types = category === "digitizing" ? DIGITIZING_TYPES : JOB_TYPES;
+  const credits = creditsFor(jobType, category ?? "vector");
   const insufficient = !isUnlimited && (session.profile?.credits_balance ?? 0) < credits;
+  const tat = (types as readonly { id: number; tat: string }[]).find((t) => t.id === jobType)?.tat;
+  const serviceOptions =
+    category === "vector" && (jobType === 3 || jobType === 4)
+      ? SERVICES.filter((s) => s.id === "standard")
+      : SERVICES.filter((s) => s.id !== "standard");
 
   if (!session.loading && isStaffUser) {
     return (
@@ -54,6 +78,12 @@ function SubmitJob() {
       </Card>
     );
   }
+
+  const pick = (c: JobCategory) => {
+    setCategory(c);
+    setJobType(1);
+    setService("");
+  };
 
   const handleFiles = (list: FileList | null) => {
     if (!list) return;
@@ -71,9 +101,17 @@ function SubmitJob() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!session.user) return;
-    if (!notifyEmail || !colorScheme || !service) {
+    if (!session.user || !category) return;
+    if (!notifyEmail || !service) {
       toast.error("Please fill required fields");
+      return;
+    }
+    if (category === "vector" && !colorScheme) {
+      toast.error("Please choose a colour scheme");
+      return;
+    }
+    if (category === "digitizing" && (formats.length === 0 || !product || !width || !height)) {
+      toast.error("Please complete output format, product and design size");
       return;
     }
     if (files.length === 0) {
@@ -86,26 +124,50 @@ function SubmitJob() {
     }
     setSubmitting(true);
     try {
-      const { data: jobId, error } = await supabase.rpc("submit_job", {
-        p_job_reference: jobReference || "",
-        p_po_number: poNumber || "",
-        p_notify_email: notifyEmail,
-        p_job_type: jobType,
-        p_service: service,
-        p_need_quote: needQuote,
-        p_authorize_extra: authorizeExtra,
-        p_color_scheme: colorScheme,
-        p_additional_bw: additionalBw,
-        p_color_separations: colorSeparations,
-        p_output_vector: outputVector,
-        p_output_raster: outputRaster,
-        p_output_other: outputOther,
-        p_instructions: instructions || "",
-        p_credits_cost: credits,
-      });
+      const payload =
+        category === "vector"
+          ? {
+              job_category: "vector",
+              job_type: jobType,
+              service,
+              job_reference: jobReference,
+              po_number: poNumber,
+              notify_email: notifyEmail,
+              need_quote: needQuote,
+              authorize_extra: authorizeExtra,
+              color_scheme: colorScheme,
+              additional_bw: additionalBw,
+              color_separations: colorSeparations,
+              output_vector: outputVector,
+              output_raster: outputRaster,
+              output_other: outputOther,
+              instructions,
+            }
+          : {
+              job_category: "digitizing",
+              job_type: jobType,
+              service,
+              job_reference: jobReference,
+              po_number: poNumber,
+              notify_email: notifyEmail,
+              need_quote: needQuote,
+              authorize_extra: authorizeExtra,
+              primary_output_formats: formats,
+              product,
+              garment_type: garmentType,
+              max_stitch_count: maxStitch,
+              logo_location: logoLocation,
+              design_width: width,
+              design_height: height,
+              design_units: units,
+              color_requirement: colorRequirement,
+              need_sew_out: needSewOut,
+              instructions,
+            };
+
+      const { data: jobId, error } = await supabase.rpc("submit_job_v2", { p_payload: payload });
       if (error) throw error;
 
-      // Upload files under {jobId}/input/...
       for (const file of files) {
         const path = `${jobId}/input/${Date.now()}-${file.name}`;
         const { error: upErr } = await supabase.storage.from("job-files").upload(path, file);
@@ -128,11 +190,45 @@ function SubmitJob() {
     }
   }
 
+  if (!category) {
+    return (
+      <div className="max-w-3xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">New job request</h1>
+          <p className="text-muted-foreground">What kind of job would you like to place?</p>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <button type="button" onClick={() => pick("vector")} className="text-left">
+            <Card className="p-6 h-full hover:border-primary transition-colors">
+              <div className="p-3 rounded-lg bg-primary/10 w-fit"><PenTool className="h-6 w-6 text-primary" /></div>
+              <h2 className="mt-4 text-lg font-bold">Vector Art</h2>
+              <p className="text-sm text-muted-foreground mt-1">Logo redraws, design layouts and print-ready vector files.</p>
+              <p className="text-xs text-muted-foreground mt-3">From 1 credit</p>
+            </Card>
+          </button>
+          <button type="button" onClick={() => pick("digitizing")} className="text-left">
+            <Card className="p-6 h-full hover:border-primary transition-colors">
+              <div className="p-3 rounded-lg bg-primary/10 w-fit"><Scissors className="h-6 w-6 text-primary" /></div>
+              <h2 className="mt-4 text-lg font-bold">Embroidery Digitizing</h2>
+              <p className="text-sm text-muted-foreground mt-1">Machine-ready stitch files for caps, garments and patches.</p>
+              <p className="text-xs text-muted-foreground mt-3">From 2 credits</p>
+            </Card>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Submit a job</h1>
-        <p className="text-muted-foreground">Provide details and upload your files.</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">{category === "vector" ? "Vector art job request" : "Digitizing job request"}</h1>
+          <p className="text-muted-foreground">Provide details and upload your files.</p>
+        </div>
+        <Button variant="ghost" size="sm" onClick={() => setCategory(null)}>
+          <ArrowLeft className="h-4 w-4 mr-1.5" /> Change type
+        </Button>
       </div>
 
       <div className="rounded-md bg-red-500/10 border border-red-500/20 text-red-700 dark:text-red-400 px-4 py-2 text-sm font-semibold text-center flex items-center justify-center gap-2">
@@ -143,17 +239,17 @@ function SubmitJob() {
         <Card className="p-6 space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <Label>Job Type *</Label>
-              <Select value={String(jobType)} onValueChange={(v) => setJobType(Number(v))}>
+              <Label>{category === "vector" ? "Job Type *" : "Service Type / Estimated Stitch Count *"}</Label>
+              <Select value={String(jobType)} onValueChange={(v) => { setJobType(Number(v)); setService(""); }}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {JOB_TYPES.map((jt) => (
+                  {types.map((jt) => (
                     <SelectItem key={jt.id} value={String(jt.id)}>{jt.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               <div className="mt-2 text-xs text-muted-foreground">
-                Cost: <span className="font-semibold text-foreground">{isUnlimited ? "Included (Unlimited plan)" : `${credits} credits`}</span> · TAT: {JOB_TYPES.find(t=>t.id===jobType)?.tat}
+                Cost: <span className="font-semibold text-foreground">{isUnlimited ? "Included (Unlimited plan)" : `${credits} credit${credits === 1 ? "" : "s"}`}</span> · TAT: {tat}
               </div>
             </div>
             <div>
@@ -161,7 +257,7 @@ function SubmitJob() {
               <Select value={service} onValueChange={setService}>
                 <SelectTrigger><SelectValue placeholder="- Select Service -" /></SelectTrigger>
                 <SelectContent>
-                  {SERVICES.map((s) => (
+                  {serviceOptions.map((s) => (
                     <SelectItem key={s.id} value={s.id}>{s.label}</SelectItem>
                   ))}
                 </SelectContent>
@@ -172,18 +268,31 @@ function SubmitJob() {
           <div className="grid md:grid-cols-2 gap-4 pt-2">
             <div>
               <Label className="mb-2 block">Need a Quote First?</Label>
-              <RadioGroup value={needQuote ? "yes" : "no"} onValueChange={(v) => setNeedQuote(v === "yes")} className="flex gap-4">
-                <div className="flex items-center gap-2"><RadioGroupItem value="yes" id="quote-yes" /><Label htmlFor="quote-yes">Yes</Label></div>
-                <div className="flex items-center gap-2"><RadioGroupItem value="no" id="quote-no" /><Label htmlFor="quote-no">No</Label></div>
+              <RadioGroup value={needQuote ? "yes" : "no"} onValueChange={(v) => setNeedQuote(v === "yes")} className="flex gap-6">
+                <div className="flex items-center gap-2"><RadioGroupItem value="yes" id="quote-yes" /><Label htmlFor="quote-yes" className="cursor-pointer">Yes</Label></div>
+                <div className="flex items-center gap-2"><RadioGroupItem value="no" id="quote-no" /><Label htmlFor="quote-no" className="cursor-pointer">No</Label></div>
               </RadioGroup>
             </div>
             <div>
-              <Label className="mb-2 block">I authorize an additional charge of up to £10 if needed</Label>
-              <RadioGroup value={authorizeExtra ? "yes" : "no"} onValueChange={(v) => setAuthorizeExtra(v === "yes")} className="flex gap-4">
-                <div className="flex items-center gap-2"><RadioGroupItem value="yes" id="auth-yes" /><Label htmlFor="auth-yes">Yes</Label></div>
-                <div className="flex items-center gap-2"><RadioGroupItem value="no" id="auth-no" /><Label htmlFor="auth-no">No</Label></div>
+              <Label className="mb-2 block">
+                {category === "vector"
+                  ? "I authorize an additional charge of up to £10 if needed"
+                  : "If stitch count exceeds above selection, I authorize an additional charge of up to £20"}
+              </Label>
+              <RadioGroup value={authorizeExtra ? "yes" : "no"} onValueChange={(v) => setAuthorizeExtra(v === "yes")} className="flex gap-6">
+                <div className="flex items-center gap-2"><RadioGroupItem value="yes" id="auth-yes" /><Label htmlFor="auth-yes" className="cursor-pointer">Yes</Label></div>
+                <div className="flex items-center gap-2"><RadioGroupItem value="no" id="auth-no" /><Label htmlFor="auth-no" className="cursor-pointer">No</Label></div>
               </RadioGroup>
             </div>
+            {category === "digitizing" && (
+              <div className="md:col-span-2">
+                <Label className="mb-2 block">Need a Real Sew Out image to verify colors? (additional charge may apply)</Label>
+                <RadioGroup value={needSewOut ? "yes" : "no"} onValueChange={(v) => setNeedSewOut(v === "yes")} className="flex gap-6">
+                  <div className="flex items-center gap-2"><RadioGroupItem value="yes" id="sew-yes" /><Label htmlFor="sew-yes" className="cursor-pointer">Yes</Label></div>
+                  <div className="flex items-center gap-2"><RadioGroupItem value="no" id="sew-no" /><Label htmlFor="sew-no" className="cursor-pointer">No</Label></div>
+                </RadioGroup>
+              </div>
+            )}
           </div>
         </Card>
 
@@ -204,54 +313,125 @@ function SubmitJob() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4 pt-2">
-            <div>
-              <Label>Color Scheme *</Label>
-              <Select value={colorScheme} onValueChange={setColorScheme}>
-                <SelectTrigger><SelectValue placeholder="Please Select" /></SelectTrigger>
-                <SelectContent>
-                  {COLOR_SCHEMES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <Label>Additional Versions at £10 each</Label>
-              <div className="mt-2 space-y-2">
-                <label className="flex items-center gap-2 text-sm">
-                  <Checkbox checked={additionalBw} onCheckedChange={(v) => setAdditionalBw(!!v)} />
-                  Additional Black &amp; White Version
-                </label>
-                <label className="flex items-center gap-2 text-sm">
-                  <Checkbox checked={colorSeparations} onCheckedChange={(v) => setColorSeparations(!!v)} />
-                  Color Separations
-                </label>
+          {category === "vector" ? (
+            <>
+              <div className="grid md:grid-cols-3 gap-4 pt-2">
+                <div>
+                  <Label>Color Scheme *</Label>
+                  <Select value={colorScheme} onValueChange={setColorScheme}>
+                    <SelectTrigger><SelectValue placeholder="Please Select" /></SelectTrigger>
+                    <SelectContent>
+                      {COLOR_SCHEMES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="md:col-span-2">
+                  <Label>Additional Versions at £10 each</Label>
+                  <div className="mt-2 space-y-2">
+                    <label className="flex items-center gap-2 text-sm">
+                      <Checkbox checked={additionalBw} onCheckedChange={(v) => setAdditionalBw(!!v)} />
+                      Additional Black &amp; White Version
+                    </label>
+                    <label className="flex items-center gap-2 text-sm">
+                      <Checkbox checked={colorSeparations} onCheckedChange={(v) => setColorSeparations(!!v)} />
+                      Color Separations
+                    </label>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <div>
-            <Label>Output / Return File format *</Label>
-            <div className="grid md:grid-cols-3 gap-4 mt-2">
-              <Select value={outputVector} onValueChange={setOutputVector}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {OUTPUT_VECTOR.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <Select value={outputRaster} onValueChange={setOutputRaster}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {OUTPUT_RASTER.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <Select value={outputOther} onValueChange={setOutputOther}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {OUTPUT_OTHER.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+              <div>
+                <Label>Output / Return File format *</Label>
+                <div className="grid md:grid-cols-3 gap-4 mt-2">
+                  <Select value={outputVector} onValueChange={setOutputVector}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {OUTPUT_VECTOR.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={outputRaster} onValueChange={setOutputRaster}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {OUTPUT_RASTER.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={outputOther} onValueChange={setOutputOther}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {OUTPUT_OTHER.map((o) => <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <Label>Primary Output Format *</Label>
+                <div className="mt-2 flex flex-wrap gap-4">
+                  {DIGITIZING_FORMATS.map((f) => (
+                    <label key={f} className="flex items-center gap-2 text-sm">
+                      <Checkbox
+                        checked={formats.includes(f)}
+                        onCheckedChange={(v) =>
+                          setFormats(v ? [...formats, f] : formats.filter((x) => x !== f))
+                        }
+                      />
+                      {f}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Product this design will be stitched on *</Label>
+                  <Select value={product} onValueChange={setProduct}>
+                    <SelectTrigger><SelectValue placeholder="Select One" /></SelectTrigger>
+                    <SelectContent>
+                      {DIGITIZING_PRODUCTS.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="mb-2 block">Garment Type</Label>
+                  <RadioGroup value={garmentType} onValueChange={setGarmentType} className="flex gap-6">
+                    <div className="flex items-center gap-2"><RadioGroupItem value="flats" id="g-flats" /><Label htmlFor="g-flats" className="cursor-pointer">Flats</Label></div>
+                    <div className="flex items-center gap-2"><RadioGroupItem value="caps" id="g-caps" /><Label htmlFor="g-caps" className="cursor-pointer">Caps</Label></div>
+                  </RadioGroup>
+                </div>
+                <div>
+                  <Label htmlFor="stitch">Maximum stitch count</Label>
+                  <Input id="stitch" value={maxStitch} onChange={(e) => setMaxStitch(e.target.value)} />
+                </div>
+                <div>
+                  <Label htmlFor="loc">Location / Size of logo</Label>
+                  <Input id="loc" placeholder='e.g. Left chest - 4" W' value={logoLocation} onChange={(e) => setLogoLocation(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Design Size *</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input placeholder="Width" value={width} onChange={(e) => setWidth(e.target.value)} />
+                    <Input placeholder="Height" value={height} onChange={(e) => setHeight(e.target.value)} />
+                  </div>
+                </div>
+                <div>
+                  <Label className="mb-2 block">Units</Label>
+                  <RadioGroup value={units} onValueChange={setUnits} className="flex gap-6">
+                    <div className="flex items-center gap-2"><RadioGroupItem value="inches" id="u-in" /><Label htmlFor="u-in" className="cursor-pointer">inches</Label></div>
+                    <div className="flex items-center gap-2"><RadioGroupItem value="centimeters" id="u-cm" /><Label htmlFor="u-cm" className="cursor-pointer">centimeters</Label></div>
+                  </RadioGroup>
+                </div>
+                <div className="md:col-span-2">
+                  <Label htmlFor="colreq">Any Specific Color Requirement</Label>
+                  <Input id="colreq" value={colorRequirement} onChange={(e) => setColorRequirement(e.target.value)} />
+                </div>
+              </div>
+            </>
+          )}
 
           <div>
             <Label>Upload Files <span className="text-muted-foreground text-xs">(Max. size 20MB/file, up to 10 files)</span></Label>

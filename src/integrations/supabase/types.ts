@@ -95,23 +95,34 @@ export type Database = {
           additional_bw: boolean
           admin_notes: string | null
           authorize_extra: boolean
-          color_scheme: string
+          color_requirement: string | null
+          color_scheme: string | null
           color_separations: boolean
           completed_at: string | null
           created_at: string
           credits_used: number
           customer_id: string
+          design_height: string | null
+          design_units: string | null
+          design_width: string | null
+          garment_type: string | null
           id: string
           instructions: string | null
+          job_category: string
           job_reference: string | null
           job_type: number
+          logo_location: string | null
+          max_stitch_count: string | null
           need_quote: boolean
+          need_sew_out: boolean
           notify_email: string
-          output_other: string
-          output_raster: string
-          output_vector: string
+          output_other: string | null
+          output_raster: string | null
+          output_vector: string | null
           po_number: string | null
-          service: string
+          primary_output_formats: string[] | null
+          product: string | null
+          service: string | null
           status: Database["public"]["Enums"]["job_status"]
           updated_at: string
         }
@@ -119,23 +130,34 @@ export type Database = {
           additional_bw?: boolean
           admin_notes?: string | null
           authorize_extra?: boolean
-          color_scheme: string
+          color_requirement?: string | null
+          color_scheme?: string | null
           color_separations?: boolean
           completed_at?: string | null
           created_at?: string
           credits_used?: number
           customer_id: string
+          design_height?: string | null
+          design_units?: string | null
+          design_width?: string | null
+          garment_type?: string | null
           id?: string
           instructions?: string | null
+          job_category?: string
           job_reference?: string | null
           job_type: number
+          logo_location?: string | null
+          max_stitch_count?: string | null
           need_quote?: boolean
+          need_sew_out?: boolean
           notify_email: string
-          output_other: string
-          output_raster: string
-          output_vector: string
+          output_other?: string | null
+          output_raster?: string | null
+          output_vector?: string | null
           po_number?: string | null
-          service: string
+          primary_output_formats?: string[] | null
+          product?: string | null
+          service?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           updated_at?: string
         }
@@ -143,23 +165,34 @@ export type Database = {
           additional_bw?: boolean
           admin_notes?: string | null
           authorize_extra?: boolean
-          color_scheme?: string
+          color_requirement?: string | null
+          color_scheme?: string | null
           color_separations?: boolean
           completed_at?: string | null
           created_at?: string
           credits_used?: number
           customer_id?: string
+          design_height?: string | null
+          design_units?: string | null
+          design_width?: string | null
+          garment_type?: string | null
           id?: string
           instructions?: string | null
+          job_category?: string
           job_reference?: string | null
           job_type?: number
+          logo_location?: string | null
+          max_stitch_count?: string | null
           need_quote?: boolean
+          need_sew_out?: boolean
           notify_email?: string
-          output_other?: string
-          output_raster?: string
-          output_vector?: string
+          output_other?: string | null
+          output_raster?: string | null
+          output_vector?: string | null
           po_number?: string | null
-          service?: string
+          primary_output_formats?: string[] | null
+          product?: string | null
+          service?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           updated_at?: string
         }
@@ -173,6 +206,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          plan_name: string | null
           plan_type: Database["public"]["Enums"]["plan_type"]
           updated_at: string
         }
@@ -183,6 +217,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          plan_name?: string | null
           plan_type?: Database["public"]["Enums"]["plan_type"]
           updated_at?: string
         }
@@ -193,6 +228,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          plan_name?: string | null
           plan_type?: Database["public"]["Enums"]["plan_type"]
           updated_at?: string
         }
@@ -291,13 +327,22 @@ export type Database = {
         }
         Returns: undefined
       }
-      admin_set_plan: {
-        Args: {
-          p_plan: Database["public"]["Enums"]["plan_type"]
-          p_user: string
-        }
-        Returns: undefined
-      }
+      admin_set_plan:
+        | {
+            Args: {
+              p_plan: Database["public"]["Enums"]["plan_type"]
+              p_user: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              p_plan: Database["public"]["Enums"]["plan_type"]
+              p_plan_name?: string
+              p_user: string
+            }
+            Returns: undefined
+          }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -326,6 +371,7 @@ export type Database = {
         }
         Returns: string
       }
+      submit_job_v2: { Args: { p_payload: Json }; Returns: string }
     }
     Enums: {
       app_role: "customer" | "admin" | "production" | "qa"
