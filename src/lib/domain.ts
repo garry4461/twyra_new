@@ -73,6 +73,31 @@ export const STATUS_COLOR: Record<string, string> = {
   revision_requested: "bg-red-500/10 text-red-600 border-red-500/20",
 };
 
-export function creditsFor(jobType: number): number {
-  return JOB_TYPES.find((j) => j.id === jobType)?.credits ?? 0;
+export type JobCategory = "vector" | "digitizing";
+
+export function creditsFor(jobType: number, category: JobCategory = "vector"): number {
+  const list = category === "digitizing" ? DIGITIZING_TYPES : JOB_TYPES;
+  return (list as readonly { id: number; credits: number }[]).find((j) => j.id === jobType)?.credits ?? 0;
 }
+
+export function typesFor(category: JobCategory) {
+  return category === "digitizing" ? DIGITIZING_TYPES : JOB_TYPES;
+}
+
+/** Display name of the customer's plan. */
+export function planLabel(
+  planType: "credit" | "unlimited_monthly" | "none" | undefined,
+  planName: string | null | undefined,
+  creditsBalance = 0,
+): string {
+  if (planName) return planName;
+  if (planType === "unlimited_monthly") return "Essential Plan";
+  if (planType === "none") return "No active plan";
+  if (creditsBalance > 50) return "Enterprise Credits";
+  if (creditsBalance > 10) return "Growth Pack";
+  return "Starter Pack";
+}
+
+export const CREDIT_PLAN_NAMES = ["Starter Pack", "Growth Pack", "Enterprise Credits"] as const;
+export const MONTHLY_PLAN_NAMES = ["Essential Plan", "Enterprise Plan", "Enterprise PRO Plan"] as const;
+
