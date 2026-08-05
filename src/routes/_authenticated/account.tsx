@@ -112,15 +112,18 @@ function Account() {
                 <div className="text-sm text-muted-foreground">Current plan</div>
                 {isUnlimited ? (
                   <>
-                    <div className="text-xl font-bold">Unlimited Monthly</div>
-                    <p className="text-sm text-muted-foreground mt-1">You're on the Unlimited Monthly plan — submit as many jobs as you like across all types.</p>
+                    <div className="text-xl font-bold">{planLabel(session.profile?.plan_type, session.profile?.plan_name)}</div>
+                    <p className="text-sm text-muted-foreground mt-1">Unlimited monthly — submit as many jobs as you like across all types.</p>
                   </>
                 ) : (
                   <>
-                    <div className="text-xl font-bold">Credit Pack — {session.profile?.credits_balance ?? 0} credits available</div>
-                    <p className="text-sm text-muted-foreground mt-1">Type 1 = 5 · Type 2 = 7 · Type 3 = 10 · Type 4 = 15</p>
+                    <div className="text-xl font-bold">
+                      {planLabel(session.profile?.plan_type, session.profile?.plan_name, session.profile?.credits_balance ?? 0)} — {session.profile?.credits_balance ?? 0} credits available
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">Simple Vector = 1 · Medium Vector = 2 · Complex/Custom Vector = up to 4 · Simple Digitizing = 2 · Complex Digitizing = up to 4</p>
                   </>
                 )}
+
               </div>
             </div>
           </Card>
