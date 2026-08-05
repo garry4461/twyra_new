@@ -37,7 +37,7 @@ function Admin() {
 
   const load = async () => {
     const [{ data: js }, { data: us }] = await Promise.all([
-      supabase.from("jobs").select("id, job_reference, job_type, status, created_at, customer_id, credits_used, notify_email").order("created_at", { ascending: false }).limit(100),
+      supabase.from("jobs").select("id, job_reference, job_type, job_category, status, created_at, customer_id, credits_used, notify_email").order("created_at", { ascending: false }).limit(100),
       supabase.from("profiles").select("id, email, full_name, plan_type, credits_balance").order("created_at", { ascending: false }),
     ]);
     setJobs((js ?? []) as JobRow[]);

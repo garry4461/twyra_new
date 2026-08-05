@@ -30,7 +30,7 @@ function Dashboard() {
     if (!session.user) return;
     supabase
       .from("jobs")
-      .select("id, job_reference, job_type, status, credits_used, created_at")
+      .select("id, job_reference, job_type, job_category, status, credits_used, created_at")
       .eq("customer_id", session.user.id)
       .order("created_at", { ascending: false })
       .limit(20)

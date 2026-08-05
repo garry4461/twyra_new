@@ -28,7 +28,7 @@ function Account() {
     if (!session.user) return;
     if (isDesigner) {
       supabase.from("jobs")
-        .select("id, job_reference, job_type, status, created_at")
+        .select("id, job_reference, job_type, job_category, status, created_at")
         .in("status", ["submitted", "under_production", "in_review"])
         .order("created_at", { ascending: false })
         .limit(50)
