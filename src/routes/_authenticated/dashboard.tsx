@@ -64,17 +64,19 @@ function Dashboard() {
           {isUnlimited ? (
             <>
               <div className="text-2xl font-bold mt-1 flex items-center gap-2">
-                <Zap className="h-5 w-5 text-primary" /> Unlimited Monthly
+                <Zap className="h-5 w-5 text-primary" /> {planLabel(session.profile?.plan_type, session.profile?.plan_name)}
               </div>
-              <div className="text-sm text-muted-foreground mt-2">Submit unlimited jobs across all types.</div>
+              <div className="text-sm text-muted-foreground mt-2">Unlimited monthly — submit unlimited jobs across all types.</div>
             </>
           ) : (
             <>
-              <div className="text-2xl font-bold mt-1">{session.profile?.credits_balance ?? 0} credits</div>
-              <div className="text-sm text-muted-foreground mt-2">Type 1 = 5 · Type 2 = 7 · Type 3 = 10 · Type 4 = 15</div>
+              <div className="text-lg font-semibold mt-1">{planLabel(session.profile?.plan_type, session.profile?.plan_name, session.profile?.credits_balance ?? 0)}</div>
+              <div className="text-2xl font-bold">{session.profile?.credits_balance ?? 0} credits</div>
+              <div className="text-sm text-muted-foreground mt-2">Simple Vector = 1 · Medium = 2 · Complex/Custom = up to 4 · Digitizing = 2–4</div>
             </>
           )}
         </Card>
+
         <Card className="p-6">
           <div className="text-sm text-muted-foreground">Jobs submitted</div>
           <div className="text-2xl font-bold mt-1">{jobs.length}</div>
