@@ -6,7 +6,7 @@ import { useSession } from "@/lib/session";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { format, formatDistanceToNow } from "date-fns";
-import { STATUS_LABEL, STATUS_COLOR, JOB_TYPES } from "@/lib/domain";
+import { STATUS_LABEL, STATUS_COLOR, JOB_TYPES, planLabel } from "@/lib/domain";
 
 export const Route = createFileRoute("/_authenticated/account")({
   component: Account,
