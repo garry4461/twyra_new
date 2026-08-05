@@ -89,9 +89,10 @@ function AuthPage() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-4xl grid md:grid-cols-2 gap-6">
         <Card className="p-8">
-          <Link to="/" className="flex items-center gap-2 mb-6 font-bold text-lg">
-            <img src="/logo.svg" alt="ArtworkGuru" className="h-9 w-auto" />
+          <Link to="/" className="flex items-center justify-center mb-6">
+            <img src="/logo.svg" alt="ArtworkGuru" className="h-16 w-auto" />
           </Link>
+
           <h1 className="text-2xl font-bold mb-1">
             {mode === "signin" ? "Sign in" : "Create your account"}
           </h1>
