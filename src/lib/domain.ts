@@ -84,6 +84,12 @@ export function typesFor(category: JobCategory) {
   return category === "digitizing" ? DIGITIZING_TYPES : JOB_TYPES;
 }
 
+export function jobTypeLabel(jobType: number, category?: string | null): string {
+  const list = category === "digitizing" ? DIGITIZING_TYPES : JOB_TYPES;
+  return (list as readonly { id: number; label: string }[]).find((t) => t.id === jobType)?.label ?? "Job";
+}
+
+
 /** Display name of the customer's plan. */
 export function planLabel(
   planType: "credit" | "unlimited_monthly" | "none" | undefined,
