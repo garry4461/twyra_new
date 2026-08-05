@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { STATUS_LABEL, STATUS_COLOR, JOB_TYPES, planLabel } from "@/lib/domain";
+import { STATUS_LABEL, STATUS_COLOR, jobTypeLabel, planLabel } from "@/lib/domain";
 import { formatDistanceToNow } from "date-fns";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -107,7 +107,7 @@ function Dashboard() {
                 <div className="flex-1">
                   <div className="font-medium">{j.job_reference || `Job ${j.id.slice(0, 8)}`}</div>
                   <div className="text-xs text-muted-foreground">
-                    {JOB_TYPES.find((t) => t.id === j.job_type)?.label} · {formatDistanceToNow(new Date(j.created_at), { addSuffix: true })}
+                    {jobTypeLabel(j.job_type, (j as { job_category?: string }).job_category)} · {formatDistanceToNow(new Date(j.created_at), { addSuffix: true })}
                   </div>
                 </div>
                 <div className="text-sm text-muted-foreground mr-4">{j.credits_used} cr</div>
