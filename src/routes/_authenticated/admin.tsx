@@ -72,12 +72,18 @@ function Admin() {
   }
 
   async function updatePlan() {
-    if (!selectedUser) return;
-    const { error } = await supabase.rpc("admin_set_plan", { p_user: selectedUser, p_plan: newPlan as "credit"|"unlimited_monthly"|"none" });
+    if (!selectedUser) { toast.error("Select a customer"); return; }
+    if (newPlan !== "none" && !planName) { toast.error("Select a plan"); return; }
+    const { error } = await supabase.rpc("admin_set_plan", {
+      p_user: selectedUser,
+      p_plan: newPlan as "credit" | "unlimited_monthly" | "none",
+      p_plan_name: newPlan === "none" ? null : planName,
+    });
     if (error) { toast.error(error.message); return; }
     toast.success("Plan updated");
     load();
   }
+
 
   return (
     <div className="space-y-6">
