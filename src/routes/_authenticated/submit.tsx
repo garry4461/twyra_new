@@ -130,10 +130,15 @@ function SubmitJob() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!session.user || !category) return;
+    if (isAdmin && !onBehalfOf) {
+      toast.error("Select the customer this job is for");
+      return;
+    }
     if (!notifyEmail || !service) {
       toast.error("Please fill required fields");
       return;
     }
+
     if (category === "vector" && !colorScheme) {
       toast.error("Please choose a colour scheme");
       return;
