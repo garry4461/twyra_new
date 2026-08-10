@@ -272,6 +272,38 @@ function SubmitJob() {
       </div>
 
       <form onSubmit={onSubmit} className="space-y-6">
+        {isAdmin && (
+          <Card className="p-6 space-y-2">
+            <Label>Submit on behalf of customer *</Label>
+            <Select
+              value={onBehalfOf}
+              onValueChange={(v) => {
+                setOnBehalfOf(v);
+                const c = customers.find((x) => x.id === v);
+                if (c?.email) setNotifyEmail(c.email);
+              }}
+            >
+              <SelectTrigger><SelectValue placeholder="Select customer" /></SelectTrigger>
+              <SelectContent>
+                {customers.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.email || c.full_name || c.id.slice(0, 8)}{c.company ? ` · ${c.company}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {targetCustomer && (
+              <p className="text-xs text-muted-foreground">
+                {targetCustomer.plan_type === "unlimited_monthly"
+                  ? `${targetCustomer.plan_name ?? "Unlimited monthly"} — no credits deducted.`
+                  : targetCustomer.plan_type === "none"
+                    ? "No active plan — set a plan in the admin console first."
+                    : `${targetCustomer.plan_name ?? "Credit pack"} — ${targetCustomer.credits_balance} credits available.`}
+              </p>
+            )}
+          </Card>
+        )}
+
         <Card className="p-6 space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div>
