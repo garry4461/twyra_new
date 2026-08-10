@@ -68,13 +68,16 @@ function AuthedLayout() {
             })}
           </nav>
           <div className="flex items-center gap-3 text-sm">
-            {session.profile?.plan_type === "unlimited_monthly" ? (
+            {isAdmin && <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">Admin</span>}
+            {isDesigner && !isAdmin && <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">Designer</span>}
+            {isCustomer && (session.profile?.plan_type === "unlimited_monthly" ? (
               <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">Unlimited</span>
             ) : (
               <span className="text-muted-foreground">
                 <span className="font-semibold text-foreground">{session.profile?.credits_balance ?? 0}</span> credits
               </span>
-            )}
+            ))}
+
             <Button variant="ghost" size="sm" onClick={handleSignOut}>
               <LogOut className="h-4 w-4" />
             </Button>
