@@ -39,12 +39,13 @@ function AuthedLayout() {
   const isCustomer = !isAdmin && !isDesigner;
 
   const nav = [
-    ...(isCustomer || isAdmin ? [{ to: "/dashboard" as const, label: "Dashboard", icon: LayoutDashboard }] : []),
-    ...(isCustomer ? [{ to: "/submit" as const, label: "Submit Job", icon: FileUp }] : []),
+    ...(isCustomer ? [{ to: "/dashboard" as const, label: "Dashboard", icon: LayoutDashboard }] : []),
+    ...(isCustomer || isAdmin ? [{ to: "/submit" as const, label: isAdmin ? "New Job" : "Submit Job", icon: FileUp }] : []),
     ...(isDesigner && !isAdmin ? [{ to: "/admin" as const, label: "Jobs", icon: FileUp }] : []),
-    { to: "/account" as const, label: "Account", icon: UserIcon },
     ...(isAdmin ? [{ to: "/admin" as const, label: "Admin", icon: ShieldCheck }] : []),
+    { to: "/account" as const, label: "Account", icon: UserIcon },
   ];
+
 
   return (
     <div className="min-h-screen bg-muted/30">

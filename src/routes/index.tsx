@@ -116,8 +116,8 @@ function SiteHeader() {
           ))}
         </nav>
         <div className="hidden gap-2 md:flex">
-          <Link to="/auth">
-            <Button variant="ghost">Sign in</Button>
+          <Link to="/auth" search={{ mode: "signup" as const }}>
+            <Button variant="ghost">Sign up</Button>
           </Link>
           <Link to="/auth">
             <Button className="bg-brand text-brand-foreground hover:bg-brand/90 shadow-sm">
@@ -125,6 +125,7 @@ function SiteHeader() {
             </Button>
           </Link>
         </div>
+
         <button
           onClick={() => setOpen((o) => !o)}
           className="grid h-9 w-9 place-items-center rounded-md border border-border md:hidden"
@@ -150,11 +151,17 @@ function SiteHeader() {
                 {n.label}
               </a>
             ))}
+            <Link to="/auth" search={{ mode: "signup" as const }} onClick={() => setOpen(false)}>
+              <Button variant="outline" className="mt-2 w-full">
+                Sign up
+              </Button>
+            </Link>
             <Link to="/auth" onClick={() => setOpen(false)}>
               <Button className="mt-2 w-full bg-brand text-brand-foreground hover:bg-brand/90">
                 Client Dashboard
               </Button>
             </Link>
+
           </div>
         </div>
       )}
