@@ -198,7 +198,10 @@ function SubmitJob() {
               instructions,
             };
 
-      const { data: jobId, error } = await supabase.rpc("submit_job_v2", { p_payload: payload });
+      const { data: jobId, error } = await supabase.rpc("submit_job_v2", {
+        p_payload: isAdmin ? { ...payload, customer_id: onBehalfOf } : payload,
+      });
+
       if (error) throw error;
 
       for (const file of files) {
