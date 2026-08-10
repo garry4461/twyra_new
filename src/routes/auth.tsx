@@ -30,7 +30,14 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [company, setCompany] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [city, setCity] = useState("");
+  const [postcode, setPostcode] = useState("");
+  const [country, setCountry] = useState("");
   const [loading, setLoading] = useState(false);
+
   const [demoLoading, setDemoLoading] = useState<string | null>(null);
   const navigate = useNavigate();
 
