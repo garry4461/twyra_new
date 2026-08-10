@@ -22,11 +22,24 @@ export const Route = createFileRoute("/_authenticated/submit")({
   component: SubmitJob,
 });
 
+interface CustomerOption {
+  id: string;
+  email: string | null;
+  full_name: string | null;
+  company: string | null;
+  plan_type: "credit" | "unlimited_monthly" | "none";
+  plan_name: string | null;
+  credits_balance: number;
+}
+
 function SubmitJob() {
   const session = useSession();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [category, setCategory] = useState<JobCategory | null>(null);
+  const [customers, setCustomers] = useState<CustomerOption[]>([]);
+  const [onBehalfOf, setOnBehalfOf] = useState("");
+
 
   // shared
   const [jobType, setJobType] = useState<number>(1);
