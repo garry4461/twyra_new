@@ -31,6 +31,8 @@ function Admin() {
   const [grantRole, setGrantRole] = useState("production");
   const [selectedUser, setSelectedUser] = useState("");
   const [newPlan, setNewPlan] = useState("credit");
+  const [planName, setPlanName] = useState("");
+
 
   const staff = isStaff(session.roles);
   const isAdmin = session.roles.includes("admin");
