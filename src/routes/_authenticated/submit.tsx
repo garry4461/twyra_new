@@ -72,25 +72,40 @@ function SubmitJob() {
   const [colorRequirement, setColorRequirement] = useState("");
   const [needSewOut, setNeedSewOut] = useState(false);
 
-  const isStaffUser = session.roles.some((r) => r === "admin" || r === "production" || r === "qa");
-  const isUnlimited = session.profile?.plan_type === "unlimited_monthly";
+  const isAdmin = session.roles.includes("admin");
+  const isDesigner = session.roles.some((r) => r === "production" || r === "qa") && !isAdmin;
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    supabase
+      .from("profiles")
+      .select("id, email, full_name, company, plan_type, plan_name, credits_balance")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => setCustomers((data ?? []) as CustomerOption[]));
+  }, [isAdmin]);
+
+  const targetCustomer = isAdmin ? customers.find((c) => c.id === onBehalfOf) ?? null : null;
+  const activePlanType = isAdmin ? targetCustomer?.plan_type : session.profile?.plan_type;
+  const activeCredits = isAdmin ? targetCustomer?.credits_balance ?? 0 : session.profile?.credits_balance ?? 0;
+  const isUnlimited = activePlanType === "unlimited_monthly";
   const types = category === "digitizing" ? DIGITIZING_TYPES : JOB_TYPES;
   const credits = creditsFor(jobType, category ?? "vector");
-  const insufficient = !isUnlimited && (session.profile?.credits_balance ?? 0) < credits;
+  const insufficient = !isUnlimited && activeCredits < credits;
   const tat = (types as readonly { id: number; tat: string }[]).find((t) => t.id === jobType)?.tat;
   const serviceOptions =
     category === "vector" && (jobType === 3 || jobType === 4)
       ? SERVICES.filter((s) => s.id === "standard")
       : SERVICES.filter((s) => s.id !== "standard");
 
-  if (!session.loading && isStaffUser) {
+  if (!session.loading && isDesigner) {
     return (
       <Card className="p-8 text-center">
         <h2 className="text-xl font-semibold mb-2">Not available for your role</h2>
-        <p className="text-muted-foreground">Only customers can submit jobs. Switch to a customer account to submit artwork requests.</p>
+        <p className="text-muted-foreground">Designers pick up jobs from the jobs queue — they don't submit new requests.</p>
       </Card>
     );
   }
+
 
   const pick = (c: JobCategory) => {
     setCategory(c);
