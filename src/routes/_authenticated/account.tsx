@@ -101,7 +101,21 @@ function Account() {
             )}
           </Card>
         </>
+      ) : isAdmin ? (
+        <Card className="p-6">
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-lg bg-primary/10"><Zap className="h-6 w-6 text-primary" /></div>
+            <div>
+              <div className="text-sm text-muted-foreground">Account type</div>
+              <div className="text-xl font-bold">Administrator</div>
+              <p className="text-sm text-muted-foreground mt-1">
+                Plans and credits are managed per customer in the admin console — this account has no plan of its own.
+              </p>
+            </div>
+          </div>
+        </Card>
       ) : (
+
         <>
           <Card className="p-6">
             <div className="flex items-center gap-3">
