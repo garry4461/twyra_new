@@ -30,7 +30,14 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [company, setCompany] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [city, setCity] = useState("");
+  const [postcode, setPostcode] = useState("");
+  const [country, setCountry] = useState("");
   const [loading, setLoading] = useState(false);
+
   const [demoLoading, setDemoLoading] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -47,7 +54,20 @@ function AuthPage() {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email, password,
-          options: { emailRedirectTo: `${window.location.origin}/dashboard`, data: { full_name: fullName, company } },
+          options: {
+            emailRedirectTo: `${window.location.origin}/dashboard`,
+            data: {
+              full_name: fullName,
+              company,
+              phone,
+              address_line1: address1,
+              address_line2: address2,
+              city,
+              postcode,
+              country,
+            },
+          },
+
         });
         if (error) throw error;
         toast.success("Account created — you're signed in.");
@@ -103,15 +123,42 @@ function AuthPage() {
             {mode === "signup" && (
               <>
                 <div>
-                  <Label htmlFor="fullName">Full name</Label>
-                  <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+                  <Label htmlFor="fullName">Full name *</Label>
+                  <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} required maxLength={100} />
                 </div>
                 <div>
-                  <Label htmlFor="company">Company</Label>
-                  <Input id="company" value={company} onChange={(e) => setCompany(e.target.value)} />
+                  <Label htmlFor="company">Company name *</Label>
+                  <Input id="company" value={company} onChange={(e) => setCompany(e.target.value)} required maxLength={120} />
+                </div>
+                <div>
+                  <Label htmlFor="phone">Mobile number *</Label>
+                  <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required maxLength={25} />
+                </div>
+                <div>
+                  <Label htmlFor="address1">Address line 1 *</Label>
+                  <Input id="address1" value={address1} onChange={(e) => setAddress1(e.target.value)} required maxLength={160} />
+                </div>
+                <div>
+                  <Label htmlFor="address2">Address line 2</Label>
+                  <Input id="address2" value={address2} onChange={(e) => setAddress2(e.target.value)} maxLength={160} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label htmlFor="city">Town / City *</Label>
+                    <Input id="city" value={city} onChange={(e) => setCity(e.target.value)} required maxLength={80} />
+                  </div>
+                  <div>
+                    <Label htmlFor="postcode">Area / Post code *</Label>
+                    <Input id="postcode" value={postcode} onChange={(e) => setPostcode(e.target.value)} required maxLength={20} />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="country">Country *</Label>
+                  <Input id="country" value={country} onChange={(e) => setCountry(e.target.value)} required maxLength={60} />
                 </div>
               </>
             )}
+
             <div>
               <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />

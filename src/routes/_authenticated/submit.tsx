@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Upload, X, AlertTriangle, PenTool, Scissors, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,11 +22,24 @@ export const Route = createFileRoute("/_authenticated/submit")({
   component: SubmitJob,
 });
 
+interface CustomerOption {
+  id: string;
+  email: string | null;
+  full_name: string | null;
+  company: string | null;
+  plan_type: "credit" | "unlimited_monthly" | "none";
+  plan_name: string | null;
+  credits_balance: number;
+}
+
 function SubmitJob() {
   const session = useSession();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [category, setCategory] = useState<JobCategory | null>(null);
+  const [customers, setCustomers] = useState<CustomerOption[]>([]);
+  const [onBehalfOf, setOnBehalfOf] = useState("");
+
 
   // shared
   const [jobType, setJobType] = useState<number>(1);
@@ -59,25 +72,40 @@ function SubmitJob() {
   const [colorRequirement, setColorRequirement] = useState("");
   const [needSewOut, setNeedSewOut] = useState(false);
 
-  const isStaffUser = session.roles.some((r) => r === "admin" || r === "production" || r === "qa");
-  const isUnlimited = session.profile?.plan_type === "unlimited_monthly";
+  const isAdmin = session.roles.includes("admin");
+  const isDesigner = session.roles.some((r) => r === "production" || r === "qa") && !isAdmin;
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    supabase
+      .from("profiles")
+      .select("id, email, full_name, company, plan_type, plan_name, credits_balance")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => setCustomers((data ?? []) as CustomerOption[]));
+  }, [isAdmin]);
+
+  const targetCustomer = isAdmin ? customers.find((c) => c.id === onBehalfOf) ?? null : null;
+  const activePlanType = isAdmin ? targetCustomer?.plan_type : session.profile?.plan_type;
+  const activeCredits = isAdmin ? targetCustomer?.credits_balance ?? 0 : session.profile?.credits_balance ?? 0;
+  const isUnlimited = activePlanType === "unlimited_monthly";
   const types = category === "digitizing" ? DIGITIZING_TYPES : JOB_TYPES;
   const credits = creditsFor(jobType, category ?? "vector");
-  const insufficient = !isUnlimited && (session.profile?.credits_balance ?? 0) < credits;
+  const insufficient = !isUnlimited && activeCredits < credits;
   const tat = (types as readonly { id: number; tat: string }[]).find((t) => t.id === jobType)?.tat;
   const serviceOptions =
     category === "vector" && (jobType === 3 || jobType === 4)
       ? SERVICES.filter((s) => s.id === "standard")
       : SERVICES.filter((s) => s.id !== "standard");
 
-  if (!session.loading && isStaffUser) {
+  if (!session.loading && isDesigner) {
     return (
       <Card className="p-8 text-center">
         <h2 className="text-xl font-semibold mb-2">Not available for your role</h2>
-        <p className="text-muted-foreground">Only customers can submit jobs. Switch to a customer account to submit artwork requests.</p>
+        <p className="text-muted-foreground">Designers pick up jobs from the jobs queue — they don't submit new requests.</p>
       </Card>
     );
   }
+
 
   const pick = (c: JobCategory) => {
     setCategory(c);
@@ -102,10 +130,15 @@ function SubmitJob() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!session.user || !category) return;
+    if (isAdmin && !onBehalfOf) {
+      toast.error("Select the customer this job is for");
+      return;
+    }
     if (!notifyEmail || !service) {
       toast.error("Please fill required fields");
       return;
     }
+
     if (category === "vector" && !colorScheme) {
       toast.error("Please choose a colour scheme");
       return;
@@ -165,7 +198,10 @@ function SubmitJob() {
               instructions,
             };
 
-      const { data: jobId, error } = await supabase.rpc("submit_job_v2", { p_payload: payload });
+      const { data: jobId, error } = await supabase.rpc("submit_job_v2", {
+        p_payload: isAdmin ? { ...payload, customer_id: onBehalfOf } : payload,
+      });
+
       if (error) throw error;
 
       for (const file of files) {
@@ -236,6 +272,38 @@ function SubmitJob() {
       </div>
 
       <form onSubmit={onSubmit} className="space-y-6">
+        {isAdmin && (
+          <Card className="p-6 space-y-2">
+            <Label>Submit on behalf of customer *</Label>
+            <Select
+              value={onBehalfOf}
+              onValueChange={(v) => {
+                setOnBehalfOf(v);
+                const c = customers.find((x) => x.id === v);
+                if (c?.email) setNotifyEmail(c.email);
+              }}
+            >
+              <SelectTrigger><SelectValue placeholder="Select customer" /></SelectTrigger>
+              <SelectContent>
+                {customers.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.email || c.full_name || c.id.slice(0, 8)}{c.company ? ` · ${c.company}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {targetCustomer && (
+              <p className="text-xs text-muted-foreground">
+                {targetCustomer.plan_type === "unlimited_monthly"
+                  ? `${targetCustomer.plan_name ?? "Unlimited monthly"} — no credits deducted.`
+                  : targetCustomer.plan_type === "none"
+                    ? "No active plan — set a plan in the admin console first."
+                    : `${targetCustomer.plan_name ?? "Credit pack"} — ${targetCustomer.credits_balance} credits available.`}
+              </p>
+            )}
+          </Card>
+        )}
+
         <Card className="p-6 space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div>

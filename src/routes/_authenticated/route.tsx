@@ -39,12 +39,13 @@ function AuthedLayout() {
   const isCustomer = !isAdmin && !isDesigner;
 
   const nav = [
-    ...(isCustomer || isAdmin ? [{ to: "/dashboard" as const, label: "Dashboard", icon: LayoutDashboard }] : []),
-    ...(isCustomer ? [{ to: "/submit" as const, label: "Submit Job", icon: FileUp }] : []),
+    ...(isCustomer ? [{ to: "/dashboard" as const, label: "Dashboard", icon: LayoutDashboard }] : []),
+    ...(isCustomer || isAdmin ? [{ to: "/submit" as const, label: isAdmin ? "New Job" : "Submit Job", icon: FileUp }] : []),
     ...(isDesigner && !isAdmin ? [{ to: "/admin" as const, label: "Jobs", icon: FileUp }] : []),
-    { to: "/account" as const, label: "Account", icon: UserIcon },
     ...(isAdmin ? [{ to: "/admin" as const, label: "Admin", icon: ShieldCheck }] : []),
+    { to: "/account" as const, label: "Account", icon: UserIcon },
   ];
+
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -67,13 +68,16 @@ function AuthedLayout() {
             })}
           </nav>
           <div className="flex items-center gap-3 text-sm">
-            {session.profile?.plan_type === "unlimited_monthly" ? (
+            {isAdmin && <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">Admin</span>}
+            {isDesigner && !isAdmin && <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">Designer</span>}
+            {isCustomer && (session.profile?.plan_type === "unlimited_monthly" ? (
               <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">Unlimited</span>
             ) : (
               <span className="text-muted-foreground">
                 <span className="font-semibold text-foreground">{session.profile?.credits_balance ?? 0}</span> credits
               </span>
-            )}
+            ))}
+
             <Button variant="ghost" size="sm" onClick={handleSignOut}>
               <LogOut className="h-4 w-4" />
             </Button>

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { STATUS_LABEL, STATUS_COLOR, jobTypeLabel } from "@/lib/domain";
+import { STATUS_LABEL, STATUS_COLOR, jobTypeLabel, CREDIT_PLAN_NAMES, MONTHLY_PLAN_NAMES } from "@/lib/domain";
 import { format } from "date-fns";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -31,6 +31,8 @@ function Admin() {
   const [grantRole, setGrantRole] = useState("production");
   const [selectedUser, setSelectedUser] = useState("");
   const [newPlan, setNewPlan] = useState("credit");
+  const [planName, setPlanName] = useState("");
+
 
   const staff = isStaff(session.roles);
   const isAdmin = session.roles.includes("admin");
@@ -72,12 +74,18 @@ function Admin() {
   }
 
   async function updatePlan() {
-    if (!selectedUser) return;
-    const { error } = await supabase.rpc("admin_set_plan", { p_user: selectedUser, p_plan: newPlan as "credit"|"unlimited_monthly"|"none" });
+    if (!selectedUser) { toast.error("Select a customer"); return; }
+    if (newPlan !== "none" && !planName) { toast.error("Select a plan"); return; }
+    const { error } = await supabase.rpc("admin_set_plan", {
+      p_user: selectedUser,
+      p_plan: newPlan as "credit" | "unlimited_monthly" | "none",
+      p_plan_name: newPlan === "none" ? null : planName,
+    });
     if (error) { toast.error(error.message); return; }
     toast.success("Plan updated");
     load();
   }
+
 
   return (
     <div className="space-y-6">
@@ -161,17 +169,38 @@ function Admin() {
               </Select>
             </div>
             <div>
-              <Label>Plan</Label>
-              <Select value={newPlan} onValueChange={setNewPlan}>
+              <Label>Engagement mode</Label>
+              <Select value={newPlan} onValueChange={(v) => { setNewPlan(v); setPlanName(""); }}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="credit">Credit Pack</SelectItem>
-                  <SelectItem value="unlimited_monthly">Unlimited Monthly</SelectItem>
-                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="credit">Credit pack (FlexCredits)</SelectItem>
+                  <SelectItem value="unlimited_monthly">Monthly unlimited</SelectItem>
+                  <SelectItem value="none">No active plan</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+            {newPlan !== "none" && (
+              <div>
+                <Label>Plan</Label>
+                <Select value={planName} onValueChange={setPlanName}>
+                  <SelectTrigger><SelectValue placeholder="Select plan" /></SelectTrigger>
+                  <SelectContent>
+                    {(newPlan === "credit" ? CREDIT_PLAN_NAMES : MONTHLY_PLAN_NAMES).map((p) => (
+                      <SelectItem key={p} value={p}>{p}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {newPlan === "unlimited_monthly"
+                ? "Monthly unlimited plans submit unlimited jobs — credits are not deducted."
+                : newPlan === "credit"
+                  ? "Credit packs deduct credits per job (Simple Vector 1 · Medium 2 · Complex/Custom up to 4 · Digitizing 2–4)."
+                  : "Customer cannot submit jobs until a plan is set."}
+            </p>
             <Button onClick={updatePlan}>Update plan</Button>
+
           </Card>
         </div>
       )}

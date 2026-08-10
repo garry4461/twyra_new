@@ -45,7 +45,7 @@ function Dashboard() {
   const isDesigner = session.roles.some((r) => r === "production" || r === "qa");
   const isCustomer = !isAdmin && !isDesigner;
 
-  if (isDesigner && !isAdmin) return <Navigate to="/admin" replace />;
+  if (isAdmin || (isDesigner && !isAdmin)) return <Navigate to="/admin" replace />;
 
 
   return (

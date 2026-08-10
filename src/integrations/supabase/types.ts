@@ -200,36 +200,54 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address_line1: string | null
+          address_line2: string | null
+          city: string | null
           company: string | null
+          country: string | null
           created_at: string
           credits_balance: number
           email: string | null
           full_name: string | null
           id: string
+          phone: string | null
           plan_name: string | null
           plan_type: Database["public"]["Enums"]["plan_type"]
+          postcode: string | null
           updated_at: string
         }
         Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          city?: string | null
           company?: string | null
+          country?: string | null
           created_at?: string
           credits_balance?: number
           email?: string | null
           full_name?: string | null
           id: string
+          phone?: string | null
           plan_name?: string | null
           plan_type?: Database["public"]["Enums"]["plan_type"]
+          postcode?: string | null
           updated_at?: string
         }
         Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          city?: string | null
           company?: string | null
+          country?: string | null
           created_at?: string
           credits_balance?: number
           email?: string | null
           full_name?: string | null
           id?: string
+          phone?: string | null
           plan_name?: string | null
           plan_type?: Database["public"]["Enums"]["plan_type"]
+          postcode?: string | null
           updated_at?: string
         }
         Relationships: []
