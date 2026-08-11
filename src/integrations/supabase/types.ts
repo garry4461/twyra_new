@@ -345,22 +345,14 @@ export type Database = {
         }
         Returns: undefined
       }
-      admin_set_plan:
-        | {
-            Args: {
-              p_plan: Database["public"]["Enums"]["plan_type"]
-              p_user: string
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              p_plan: Database["public"]["Enums"]["plan_type"]
-              p_plan_name?: string
-              p_user: string
-            }
-            Returns: undefined
-          }
+      admin_set_plan: {
+        Args: {
+          p_plan: Database["public"]["Enums"]["plan_type"]
+          p_plan_name?: string
+          p_user: string
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -369,26 +361,6 @@ export type Database = {
         Returns: boolean
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
-      submit_job: {
-        Args: {
-          p_additional_bw: boolean
-          p_authorize_extra: boolean
-          p_color_scheme: string
-          p_color_separations: boolean
-          p_credits_cost: number
-          p_instructions: string
-          p_job_reference: string
-          p_job_type: number
-          p_need_quote: boolean
-          p_notify_email: string
-          p_output_other: string
-          p_output_raster: string
-          p_output_vector: string
-          p_po_number: string
-          p_service: string
-        }
-        Returns: string
-      }
       submit_job_v2: { Args: { p_payload: Json }; Returns: string }
     }
     Enums: {
