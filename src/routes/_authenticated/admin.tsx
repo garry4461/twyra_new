@@ -79,7 +79,7 @@ function Admin() {
     const { error } = await supabase.rpc("admin_set_plan", {
       p_user: selectedUser,
       p_plan: newPlan as "credit" | "unlimited_monthly" | "none",
-      p_plan_name: newPlan === "none" ? null : planName,
+      p_plan_name: newPlan === "none" ? undefined : planName,
     });
     if (error) { toast.error(error.message); return; }
     toast.success("Plan updated");
