@@ -37,7 +37,6 @@ function AuthPage() {
   const [country, setCountry] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [demoLoading, setDemoLoading] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -83,25 +82,6 @@ function AuthPage() {
     }
   }
 
-  async function demoLogin(key: "admin" | "customer" | "designer") {
-    setDemoLoading(key);
-    try {
-      const user = DEMO_USERS.find((u) => u.key === key)!;
-      // First attempt — assumes users already seeded
-      let { error } = await supabase.auth.signInWithPassword({ email: user.email, password: DEMO_PASSWORD });
-      if (error) {
-        toast.message("Preparing demo accounts…");
-        await ensureDemoUsers();
-        ({ error } = await supabase.auth.signInWithPassword({ email: user.email, password: DEMO_PASSWORD }));
-        if (error) throw error;
-      }
-      toast.success(`Signed in as ${ROLE_META[key].label}`);
-      navigate({ to: "/dashboard" });
-    } catch (err) {
-      toast.error(`Demo login failed: ${(err as Error).message}`);
-    } finally {
-      setDemoLoading(null);
-    }
   }
 
   return (
@@ -178,49 +158,6 @@ function AuthPage() {
           </button>
         </Card>
 
-        <Card className="p-8 bg-ink text-white border-transparent">
-          <p className="text-xs font-bold uppercase tracking-widest text-highlight">Try the demo</p>
-          <h2 className="mt-2 text-2xl font-extrabold">Three roles, one click</h2>
-          <p className="mt-2 text-sm text-white/70">
-            Skip sign-up and log in as any role to test the full workflow. Sample accounts are provisioned automatically the first time you click.
-          </p>
-          <div className="mt-6 space-y-3">
-            {(["admin", "customer", "designer"] as const).map((key) => {
-              const meta = ROLE_META[key];
-              const user = DEMO_USERS.find((u) => u.key === key)!;
-              const Icon = meta.icon;
-              return (
-                <button
-                  key={key}
-                  onClick={() => demoLogin(key)}
-                  disabled={demoLoading !== null}
-                  className="group w-full rounded-2xl border border-white/10 bg-white/5 p-4 text-left transition hover:bg-white/10 disabled:opacity-60"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-highlight text-highlight-foreground">
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-bold">{meta.label}</p>
-                        <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/70">
-                          {user.email}
-                        </span>
-                      </div>
-                      <p className="mt-0.5 text-xs text-white/70">{meta.desc}</p>
-                    </div>
-                    <span className="text-xs font-semibold text-highlight">
-                      {demoLoading === key ? "Signing in…" : "Log in →"}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-          <p className="mt-6 text-xs text-white/50">
-            Password for every demo account: <span className="font-mono text-white/80">{DEMO_PASSWORD}</span>
-          </p>
-        </Card>
       </div>
     </div>
   );
