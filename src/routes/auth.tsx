@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { ensureDemoUsers, DEMO_PASSWORD, DEMO_USERS } from "@/lib/demo-users.functions";
 
 const searchSchema = z.object({ mode: z.enum(["signin", "signup"]).optional() });
 
