@@ -41,7 +41,7 @@ function loadMessages(): UIMessage[] {
 
 export function SupportChat() {
   const [open, setOpen] = useState(false);
-  const [input, setInput] = useState("");
+  
   const [initialMessages] = useState<UIMessage[]>(() => loadMessages());
   const [transport] = useState(() => new DefaultChatTransport({ api: "/api/chat" }));
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -70,9 +70,9 @@ export function SupportChat() {
   const send = (text: string) => {
     const value = text.trim();
     if (!value || busy) return;
-    setInput("");
     void sendMessage({ text: value });
   };
+
 
   const reset = () => {
     setMessages([]);
@@ -188,22 +188,21 @@ export function SupportChat() {
 
         <div className="border-t p-3">
           <PromptInput
-            onSubmit={(_message, event) => {
+            onSubmit={(message, event) => {
               event.preventDefault();
-              send(input);
+              send(message.text ?? "");
             }}
           >
             <PromptInputTextarea
               ref={textareaRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about pricing, credits, file formats…"
             />
             <PromptInputFooter className="justify-end">
-              <PromptInputSubmit status={status} disabled={!input.trim() || busy} />
+              <PromptInputSubmit status={status} disabled={busy} />
             </PromptInputFooter>
           </PromptInput>
         </div>
+
       </div>
     </>
   );
