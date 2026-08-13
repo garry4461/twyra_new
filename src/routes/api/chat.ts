@@ -16,7 +16,8 @@ What you know about ArtworkGuru:
 - Two ways to buy:
   1) Unlimited Monthly plan — unlimited design submissions, best value once estimated spend goes above £399/month.
   2) FlexCredits (pay as you go) — Starter Pack: 10 credits for £99 (first order gets 10 extra credits free). Growth Pack: 50 credits for £399. Credits never expire.
-- Rough credit usage: Job Type 1 (Logo w/ text) 5 credits, Job Type 2 (Design layout) 7 credits, Job Type 3 (Complex artwork) 10 credits, Job Type 4 (Custom artwork) 15 credits.
+- Credit usage (vector): Job Type 1 (Simple) 1 credit, Job Type 2 (Medium) 2 credits, Job Type 3 (Complex) 4 credits, Job Type 4 (Custom) 4 credits. Digitizing: Simple (up to 10k stitches) 2 credits, Complex (10k+ stitches) 4 credits.
+- Turnaround: Job Types 1-2 and simple digitizing are next day / same day; Job Types 3-4 and complex digitizing are 2-3 business days.
 - Customers submit jobs in the portal (sign in at /auth), choose job type, colour scheme (Black & White, B&W with Gradients, Spot Colors with/without Gradients, CMYK 4 colour), output formats (ai, eps, cdr, jpg, gif, bmp, psd, pdf, tiff) and can upload up to 10 files.
 - Job workflow: Submitted -> Under production -> In review -> QA -> Completed. Customers get notified when a job is ready, can download files and raise a revision request.
 
