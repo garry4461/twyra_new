@@ -36,6 +36,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { SiteFooter } from "@/components/site-footer";
+
 
 const TITLE = "ArtworkGuru — Vector Art & Embroidery Digitizing Portal";
 const DESCRIPTION =
@@ -1423,49 +1425,6 @@ function Field({
 
 /* -------------------------- Footer -------------------------- */
 
-function SiteFooter() {
-  return (
-    <footer className="border-t border-border bg-surface-muted">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:px-8">
-        <div>
-          <Logo />
-          <p className="mt-4 max-w-xs text-sm text-muted-foreground">
-            Vector art, embroidery digitizing, and mockups on a flexible credit model.
-          </p>
-        </div>
-        <FooterCol
-          title="Services"
-          links={["Vector Art", "Digitizing", "Mockups", "Patches"]}
-        />
-        <FooterCol title="Company" links={["About", "Portfolio", "Contact", "Careers"]} />
-        <FooterCol title="Support" links={["Help Center", "Privacy", "Terms", "Status"]} />
-      </div>
-      <div className="border-t border-border">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
-          <p>© {new Date().getFullYear()} ArtworkGuru. All rights reserved.</p>
-          <p>Made for print, merch, and embroidery brands worldwide.</p>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-function FooterCol({ title, links }: { title: string; links: string[] }) {
-  return (
-    <div>
-      <p className="text-sm font-bold">{title}</p>
-      <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-        {links.map((l) => (
-          <li key={l}>
-            <a href="#" className="hover:text-foreground">
-              {l}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
 
 /* -------------------------- Shared -------------------------- */
 
