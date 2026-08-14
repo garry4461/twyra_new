@@ -79,7 +79,7 @@ function DigitizingPage() {
     <PageShell>
       <PageHero
         eyebrow="Embroidery Digitizing"
-        title="Stitch files that run clean first time"
+        title="Stitch files that run clean"
         subtitle="We turn your logo or artwork into a hand-punched embroidery file, built around your fabric, size and machine — so it sews smoothly instead of fighting the hoop."
       />
 

@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Palette, LogOut, LayoutDashboard, FileUp, ShieldCheck, User as UserIcon } from "lucide-react";
+import { LogOut, LayoutDashboard, FileUp, ShieldCheck, User as UserIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ function AuthedLayout() {
       <header className="bg-background border-b border-border sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-6">
           <Link to="/dashboard" className="flex items-center gap-2 font-bold">
-            <Palette className="h-5 w-5 text-primary" /> ArtworkGuru
+            <img src="/logo.svg" alt="ArtworkGuru" className="h-10 w-auto" />
           </Link>
           <nav className="flex items-center gap-1 flex-1">
             {nav.map((n) => {

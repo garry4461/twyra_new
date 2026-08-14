@@ -90,7 +90,7 @@ function VectorArtPage() {
     <PageShell>
       <PageHero
         eyebrow="Vector Art"
-        title="Artwork redraws that hold up at any size"
+        title="Artwork redraws at any size"
         subtitle="Send us a low-resolution logo, a scan or a photo. We hand-redraw it into clean, scalable vector artwork that's ready for print, embroidery, signage and merch."
       />
 
