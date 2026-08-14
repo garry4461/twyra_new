@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const SERVICES: { label: string; to: string }[] = [
-  { label: "Vector Art", to: "/services/vector-art" },
-  { label: "Digitizing", to: "/services/digitizing" },
+  { label: "Artwork Services", to: "/services/vector-art" },
+  { label: "Digitising Embroidery", to: "/services/digitizing" },
 ];
 
 const COMPANY: { label: string; to: string }[] = [
