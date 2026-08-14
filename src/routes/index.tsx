@@ -37,6 +37,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 
 
 const TITLE = "ArtworkGuru — Vector Art & Embroidery Digitizing Portal";
@@ -73,101 +74,6 @@ function LandingPage() {
       </main>
       <SiteFooter />
     </div>
-  );
-}
-
-/* -------------------------- Header -------------------------- */
-
-function Logo({ variant = "default" }: { variant?: "default" | "onDark" }) {
-  return (
-    <a href="#top" className="flex items-center gap-2" aria-label="ArtworkGuru">
-      <img
-        src="/logo.svg"
-        alt="ArtworkGuru"
-        className={`h-11 w-auto sm:h-14 ${variant === "onDark" ? "brightness-0 invert" : ""}`}
-      />
-    </a>
-  );
-}
-
-function SiteHeader() {
-  const [open, setOpen] = useState(false);
-  const nav = [
-    { label: "Home", href: "#top" },
-    { label: "How It Works", href: "#how" },
-    { label: "Pricing", href: "#pricing" },
-    { label: "Portfolio", href: "/portfolio" },
-    { label: "FAQ", href: "#faq" },
-  ];
-  return (
-    <header
-      id="top"
-      className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md"
-    >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Logo />
-        <nav className="hidden items-center gap-8 md:flex">
-          {nav.map((n) => (
-            <a
-              key={n.label}
-              href={n.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {n.label}
-            </a>
-          ))}
-        </nav>
-        <div className="hidden gap-2 md:flex">
-          <Link to="/auth" search={{ mode: "signup" as const }}>
-            <Button variant="ghost">Sign up</Button>
-          </Link>
-          <Link to="/auth">
-            <Button className="bg-brand text-brand-foreground hover:bg-brand/90 shadow-sm">
-              Client Dashboard
-            </Button>
-          </Link>
-        </div>
-
-        <button
-          onClick={() => setOpen((o) => !o)}
-          className="grid h-9 w-9 place-items-center rounded-md border border-border md:hidden"
-          aria-label="Toggle menu"
-        >
-          <span className="i sr-only">Menu</span>
-          <div className="space-y-1.5">
-            <span className="block h-0.5 w-4 bg-foreground" />
-            <span className="block h-0.5 w-4 bg-foreground" />
-          </div>
-        </button>
-      </div>
-      {open && (
-        <div className="border-t border-border md:hidden">
-          <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3">
-            {nav.map((n) => (
-              <a
-                key={n.label}
-                href={n.href}
-                onClick={() => setOpen(false)}
-                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                {n.label}
-              </a>
-            ))}
-            <Link to="/auth" search={{ mode: "signup" as const }} onClick={() => setOpen(false)}>
-              <Button variant="outline" className="mt-2 w-full">
-                Sign up
-              </Button>
-            </Link>
-            <Link to="/auth" onClick={() => setOpen(false)}>
-              <Button className="mt-2 w-full bg-brand text-brand-foreground hover:bg-brand/90">
-                Client Dashboard
-              </Button>
-            </Link>
-
-          </div>
-        </div>
-      )}
-    </header>
   );
 }
 
