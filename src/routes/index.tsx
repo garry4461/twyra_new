@@ -1132,51 +1132,93 @@ function Testimonials() {
 function FAQ() {
   const faqs = [
     {
-      q: "Do credits expire?",
-      a: "No. Credits you purchase stay on your account until you use them.",
+      q: "How do I know which plan is right for me?",
+      a: "If you send artwork most working days, the Unlimited Monthly plan is usually the better value. If your volume is lumpy or seasonal, FlexCredits let you pay only for the jobs you actually send.",
     },
     {
-      q: "How quickly can I expect artwork back?",
-      a: "Most jobs are delivered within 24 hours. Growth and Enterprise plans include priority queues (12h / 4h).",
+      q: "What does unlimited requests and unlimited revisions mean?",
+      a: "On a monthly plan you can queue as many jobs as you like and keep revising each one until it's right. Requests are worked through one at a time in your queue order.",
     },
     {
-      q: "What file formats do you deliver?",
-      a: "Vector: AI, EPS, SVG, PDF. Digitizing: DST, PES, EMB, JEF. Mockups: PNG, JPG, PSD.",
+      q: "How can I submit my job request?",
+      a: "Sign in to the client dashboard, choose Vector Art or Digitizing, fill in the job form, upload up to 10 reference files and add your notes. Everything is tracked from that job page.",
     },
     {
-      q: "Do you offer unlimited revisions?",
-      a: "Yes. Credits are only deducted when you approve the final file.",
+      q: "So, can I send 100 different requests in one go?",
+      a: "Yes. Submit them all and they sit in your queue. We work through them in order and deliver each one as it's finished.",
     },
     {
-      q: "Can I switch packages later?",
-      a: "Absolutely. Top up whenever, upgrade whenever — unused credits carry over.",
+      q: "What type of artwork or designs can I submit?",
+      a: "Logos, badges, crests, mascots, typography lock-ups, patterns, separations and full layouts for print, merch, signage and embroidery.",
     },
     {
-      q: "What if I don't love a design?",
-      a: "We'll iterate until it's right, or refund the credit on genuine misses.",
+      q: "What designs are out of scope?",
+      a: "Original brand creation from scratch, animation, video, UI/UX design, and anything that infringes third-party copyright.",
+    },
+    {
+      q: "How quickly can I expect my artwork or design?",
+      a: "Simple and medium jobs come back in 12–24 hours. Complex and fully custom artwork is quoted at 2–3 working days.",
+    },
+    {
+      q: "Who owns the design?",
+      a: "You do. Once a job is delivered, full ownership of the artwork and stitch files transfers to you.",
+    },
+    {
+      q: "Why am I being billed monthly?",
+      a: "The Unlimited plan is a rolling monthly subscription that keeps your queue open. You can cancel or switch to FlexCredits before the next renewal.",
+    },
+    {
+      q: "Can I switch my selected plan in the future?",
+      a: "Yes. Move between FlexCredits and Unlimited Monthly whenever you like — unused credits stay on your account.",
+    },
+    {
+      q: "What if I don't like a design?",
+      a: "Raise a revision request from the job page. We'll iterate until it's right, and on genuine misses we refund the credit.",
+    },
+    {
+      q: "How many credits does a job cost?",
+      a: "Vector: 1 credit for simple, 2 for medium, 4 for complex or fully custom. Digitizing: 2 credits standard, 4 for complex pieces such as 3D puff or appliqué.",
+    },
+    {
+      q: "Do FlexCredits expire?",
+      a: "No. Credits stay on your account until you use them — there's no monthly reset and no expiry date.",
+    },
+    {
+      q: "When are FlexCredits deducted?",
+      a: "Credits are reserved when you submit and only settled once the job is delivered. Revisions on the same job never cost extra credits.",
+    },
+    {
+      q: "Can I top up FlexCredits mid-month?",
+      a: "Yes, top up any time from your account page. Larger top-ups drop the per-credit rate automatically.",
+    },
+    {
+      q: "What happens if I run out of credits mid-job?",
+      a: "Jobs already in production are unaffected. You'll just need to top up before submitting the next one — or move to the Unlimited Monthly plan.",
     },
   ];
+  const half = Math.ceil(faqs.length / 2);
+  const columns = [faqs.slice(0, half), faqs.slice(half)];
   return (
     <section id="faq" className="py-20 sm:py-28">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <SectionHeader
-          eyebrow="FAQ"
-          title="Frequently asked questions"
-          subtitle="Can't find what you're looking for? Reach out and we'll help."
-        />
-        <div className="mt-10 rounded-2xl border border-border bg-card p-2 shadow-[var(--shadow-card)]">
-          <Accordion type="single" collapsible className="w-full">
-            {faqs.map((f, i) => (
-              <AccordionItem key={i} value={`item-${i}`} className="border-border">
-                <AccordionTrigger className="px-4 text-left text-base font-semibold hover:no-underline">
-                  {f.q}
-                </AccordionTrigger>
-                <AccordionContent className="px-4 text-sm leading-relaxed text-muted-foreground">
-                  {f.a}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <h2 className="text-center text-3xl font-extrabold tracking-tight sm:text-4xl">
+          Frequently Asked Questions
+        </h2>
+        <div className="mt-10 grid gap-x-12 md:grid-cols-2">
+          {columns.map((col, ci) => (
+            <Accordion key={ci} type="single" collapsible className="w-full">
+              {col.map((f, i) => (
+                <AccordionItem key={i} value={`item-${ci}-${i}`} className="border-border">
+                  <AccordionTrigger className="text-left text-base font-semibold hover:no-underline">
+                    {f.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+                    {f.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          ))}
         </div>
       </div>
     </section>
