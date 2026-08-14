@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const SERVICES = [
-  { label: "Vector Artwork", to: "/services/vector-art" as const },
-  { label: "Digitizing Embroidery Services", to: "/services/digitizing" as const },
+  { label: "Artwork Services", to: "/services/vector-art" as const },
+  { label: "Digitising Embroidery", to: "/services/digitizing" as const },
 ];
 
 const NAV = [
