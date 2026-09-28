@@ -219,10 +219,6 @@ function AuthPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <label className="flex cursor-pointer items-start gap-3 text-sm leading-5 text-muted-foreground">
-                  <Checkbox checked={detailsConfirmed} onCheckedChange={(checked) => setDetailsConfirmed(checked === true)} className="mt-0.5" />
-                  <span>I confirm that the information I provided is correct.</span>
-                </label>
               </>
             )}
 
