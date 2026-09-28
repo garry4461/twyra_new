@@ -139,7 +139,7 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Thanks for registering with ArtworkGuru.");
+        toast.success("Thanks for registering with ArtworkGuru — 10 free credits added to your Trial Pack.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error) throw error;

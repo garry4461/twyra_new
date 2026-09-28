@@ -104,7 +104,7 @@ export function planLabel(
   return "Starter Pack";
 }
 
-export const CREDIT_PLAN_NAMES = ["Starter Pack", "Growth Pack"] as const;
+export const CREDIT_PLAN_NAMES = ["Trial Pack", "Starter Pack", "Growth Pack"] as const;
 export const MONTHLY_PLAN_NAMES = ["Essential Plan", "Enterprise Plan", "Enterprise PRO Plan"] as const;
 
 
