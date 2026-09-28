@@ -278,7 +278,7 @@ function AuthPage() {
                 </label>
 
                 <p className="rounded-lg border border-brand/30 bg-brand/5 px-3 py-2 text-sm text-foreground">
-                  Buy 10 Get 10 — plus <strong>10 free credits</strong> activated instantly on your Trial Pack when you sign up.
+                  <strong>10 free credits</strong> are added to your Trial Pack when you sign up. No purchase needed.
                 </p>
               </>
             )}

@@ -94,7 +94,7 @@ function Hero() {
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-14 sm:px-6 sm:pb-20 sm:pt-16 lg:px-8 lg:pt-24">
         <div className="mx-auto max-w-3xl text-center">
           <Badge className="mb-6 rounded-full border border-highlight/40 bg-highlight/15 px-3 py-1 text-xs font-semibold text-highlight-foreground hover:bg-highlight/15">
-            🎁 Launch offer · Buy 10 credits, get 10 free on your first order
+            🎁 Sign up and get 10 free credits — no purchase needed
           </Badge>
           <h1 className="text-balance text-3xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
             Unlimited Design For{" "}
@@ -111,9 +111,9 @@ function Hero() {
               size="lg"
               className="bg-brand text-brand-foreground hover:bg-brand/90 shadow-[var(--shadow-pop)]"
             >
-              <a href="#credits">
+              <Link to="/auth" search={{ mode: "signup" }}>
                 Get 10 Free Credits <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
+              </Link>
             </Button>
             <Button
               asChild
@@ -219,7 +219,7 @@ function CreditModel() {
 
   const suggested = useMemo(() => {
     if (goMonthly) return { name: "Unlimited Monthly", price: estCost };
-    if (totalCredits <= 10) return { name: "Starter Pack", credits: 10, price: 99 };
+    if (totalCredits <= 10) return { name: "Free Trial Pack", credits: 10, price: 0 };
     return { name: "Growth Pack", credits: 50, price: 399 };
   }, [totalCredits, goMonthly, estCost]);
 
@@ -236,11 +236,10 @@ function CreditModel() {
         {/* Promo banner */}
         <div className="mx-auto mt-8 max-w-3xl rounded-2xl border-2 border-highlight bg-highlight/10 p-4 text-center sm:p-5">
           <p className="text-sm font-bold text-foreground sm:text-base">
-            🎁 First-order offer: Buy 10 credits, get{" "}
-            <span className="text-brand">10 credits free</span>
+            🎁 Sign up and get <span className="text-brand">10 free credits</span> automatically
           </p>
           <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-            Effectively 20 credits for £99 — enough for ~10–14 designs.
+            Use them for up to 10 simple vector redraws, 5 simple digitizing jobs, or a mix of design requests — no payment needed.
           </p>
         </div>
 
@@ -318,14 +317,16 @@ function CreditModel() {
             <CreditPackCard
               name="Starter Pack"
               credits={10}
-              price={99}
+              price={0}
+              originalPrice={99}
               perks={[
-                "10 credits · ~5–7 designs",
-                "First order: get 10 credits FREE",
+                "10 free credits added when you sign up",
+                "Try vector redraws or embroidery digitizing",
                 "24-hour standard turnaround",
                 "Credits never expire",
               ]}
               cta="Get 10 Free Credits"
+              signup
             />
             <CreditPackCard
               name="Growth Pack"
@@ -361,6 +362,7 @@ function CreditPackCard({
   perks,
   cta,
   popular,
+  signup,
 }: {
   name: string;
   credits: number;
@@ -369,6 +371,7 @@ function CreditPackCard({
   perks: string[];
   cta: string;
   popular?: boolean;
+  signup?: boolean;
 }) {
   return (
     <div
@@ -413,20 +416,18 @@ function CreditPackCard({
           </li>
         ))}
       </ul>
-      <Button
-        className={`mt-6 w-full ${
-          popular
-            ? "bg-highlight text-highlight-foreground hover:bg-highlight/90"
-            : "bg-brand text-brand-foreground hover:bg-brand/90"
-        }`}
-        onClick={() =>
-          toast.success(`${name} selected`, {
-            description: "We'll take you to checkout in production.",
-          })
-        }
-      >
-        {cta}
-      </Button>
+      {signup ? (
+        <Button asChild className="mt-6 w-full bg-brand text-brand-foreground hover:bg-brand/90">
+          <Link to="/auth" search={{ mode: "signup" }}>{cta}</Link>
+        </Button>
+      ) : (
+        <Button
+          className={`mt-6 w-full ${popular ? "bg-highlight text-highlight-foreground hover:bg-highlight/90" : "bg-brand text-brand-foreground hover:bg-brand/90"}`}
+          onClick={() => toast.success(`${name} selected`, { description: "We'll take you to checkout in production." })}
+        >
+          {cta}
+        </Button>
+      )}
     </div>
   );
 }
@@ -1019,7 +1020,7 @@ function Pricing() {
           <a href="#credits" className="font-semibold text-brand underline-offset-4 hover:underline">
             Try FlexCredits
           </a>{" "}
-          — start with 10 credits for £99 and get 10 credits free on your first order.
+          — sign up to get 10 free credits in your account, with no purchase needed.
         </p>
       </div>
     </section>
