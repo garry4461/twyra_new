@@ -235,6 +235,42 @@ function AuthPage() {
                 </Button>
               </div>
             </div>
+
+            {mode === "signup" && (
+              <>
+                <div className="rounded-lg border border-border bg-muted/40 p-4">
+                  <Label htmlFor="captcha">Security check *</Label>
+                  <div className="mt-2 flex items-center gap-3">
+                    <span className="rounded-md bg-background px-3 py-2 font-mono text-base font-semibold tracking-wider select-none">
+                      {captcha.a} + {captcha.b} = ?
+                    </span>
+                    <Input
+                      id="captcha"
+                      inputMode="numeric"
+                      value={captchaAnswer}
+                      onChange={(e) => setCaptchaAnswer(e.target.value.replace(/\D/g, ""))}
+                      className="w-24"
+                      required
+                      aria-label="Answer the security question"
+                    />
+                    <Button type="button" variant="ghost" size="icon" onClick={() => { setCaptcha(newCaptcha()); setCaptchaAnswer(""); }} aria-label="New security question">
+                      <RefreshCw className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">This helps us confirm you are a real person — no email confirmation link needed.</p>
+                </div>
+
+                <label className="flex cursor-pointer items-start gap-3 text-sm leading-5 text-muted-foreground">
+                  <Checkbox checked={detailsConfirmed} onCheckedChange={(checked) => setDetailsConfirmed(checked === true)} className="mt-0.5" />
+                  <span>I confirm that the information I provided is correct.</span>
+                </label>
+
+                <p className="rounded-lg border border-brand/30 bg-brand/5 px-3 py-2 text-sm text-foreground">
+                  Buy 10 Get 10 — plus <strong>10 free credits</strong> activated instantly on your Trial Pack when you sign up.
+                </p>
+              </>
+            )}
+
             <Button type="submit" className="w-full bg-brand text-brand-foreground hover:bg-brand/90" disabled={loading}>
               {loading ? "Please wait..." : mode === "signin" ? "Sign in" : "Create account"}
             </Button>
