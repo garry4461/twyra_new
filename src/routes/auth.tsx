@@ -107,6 +107,12 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
+        if (Number(captchaAnswer) !== captcha.a + captcha.b) {
+          toast.error("Security check answer is incorrect. Please try again.");
+          setCaptcha(newCaptcha());
+          setCaptchaAnswer("");
+          return;
+        }
         if (!detailsConfirmed) {
           toast.error("Please confirm that your registration details are correct.");
           return;
