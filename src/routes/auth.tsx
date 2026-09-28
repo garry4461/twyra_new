@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,6 +69,10 @@ export const Route = createFileRoute("/auth")({
 });
 
 
+function newCaptcha() {
+  return { a: 1 + Math.floor(Math.random() * 9), b: 1 + Math.floor(Math.random() * 9) };
+}
+
 function AuthPage() {
   const { mode: initialMode } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup">(initialMode ?? "signin");
@@ -86,6 +90,8 @@ function AuthPage() {
   const [country, setCountry] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [detailsConfirmed, setDetailsConfirmed] = useState(false);
+  const [captcha, setCaptcha] = useState(() => newCaptcha());
+  const [captchaAnswer, setCaptchaAnswer] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
