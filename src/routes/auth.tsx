@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,6 +69,10 @@ export const Route = createFileRoute("/auth")({
 });
 
 
+function newCaptcha() {
+  return { a: 1 + Math.floor(Math.random() * 9), b: 1 + Math.floor(Math.random() * 9) };
+}
+
 function AuthPage() {
   const { mode: initialMode } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup">(initialMode ?? "signin");
@@ -86,6 +90,8 @@ function AuthPage() {
   const [country, setCountry] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [detailsConfirmed, setDetailsConfirmed] = useState(false);
+  const [captcha, setCaptcha] = useState(() => newCaptcha());
+  const [captchaAnswer, setCaptchaAnswer] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -101,6 +107,12 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
+        if (Number(captchaAnswer) !== captcha.a + captcha.b) {
+          toast.error("Security check answer is incorrect. Please try again.");
+          setCaptcha(newCaptcha());
+          setCaptchaAnswer("");
+          return;
+        }
         if (!detailsConfirmed) {
           toast.error("Please confirm that your registration details are correct.");
           return;
@@ -127,7 +139,7 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Thanks for registering with ArtworkGuru.");
+        toast.success("Thanks for registering with ArtworkGuru — 10 free credits added to your Trial Pack.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error) throw error;
@@ -219,10 +231,6 @@ function AuthPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <label className="flex cursor-pointer items-start gap-3 text-sm leading-5 text-muted-foreground">
-                  <Checkbox checked={detailsConfirmed} onCheckedChange={(checked) => setDetailsConfirmed(checked === true)} className="mt-0.5" />
-                  <span>I confirm that the information I provided is correct.</span>
-                </label>
               </>
             )}
 
@@ -239,6 +247,42 @@ function AuthPage() {
                 </Button>
               </div>
             </div>
+
+            {mode === "signup" && (
+              <>
+                <div className="rounded-lg border border-border bg-muted/40 p-4">
+                  <Label htmlFor="captcha">Security check *</Label>
+                  <div className="mt-2 flex items-center gap-3">
+                    <span className="rounded-md bg-background px-3 py-2 font-mono text-base font-semibold tracking-wider select-none">
+                      {captcha.a} + {captcha.b} = ?
+                    </span>
+                    <Input
+                      id="captcha"
+                      inputMode="numeric"
+                      value={captchaAnswer}
+                      onChange={(e) => setCaptchaAnswer(e.target.value.replace(/\D/g, ""))}
+                      className="w-24"
+                      required
+                      aria-label="Answer the security question"
+                    />
+                    <Button type="button" variant="ghost" size="icon" onClick={() => { setCaptcha(newCaptcha()); setCaptchaAnswer(""); }} aria-label="New security question">
+                      <RefreshCw className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">This helps us confirm you are a real person — no email confirmation link needed.</p>
+                </div>
+
+                <label className="flex cursor-pointer items-start gap-3 text-sm leading-5 text-muted-foreground">
+                  <Checkbox checked={detailsConfirmed} onCheckedChange={(checked) => setDetailsConfirmed(checked === true)} className="mt-0.5" />
+                  <span>I confirm that the information I provided is correct.</span>
+                </label>
+
+                <p className="rounded-lg border border-brand/30 bg-brand/5 px-3 py-2 text-sm text-foreground">
+                  Buy 10 Get 10 — plus <strong>10 free credits</strong> activated instantly on your Trial Pack when you sign up.
+                </p>
+              </>
+            )}
+
             <Button type="submit" className="w-full bg-brand text-brand-foreground hover:bg-brand/90" disabled={loading}>
               {loading ? "Please wait..." : mode === "signin" ? "Sign in" : "Create account"}
             </Button>

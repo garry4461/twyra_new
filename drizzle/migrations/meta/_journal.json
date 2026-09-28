@@ -8,6 +8,13 @@
       "when": 1790241909631,
       "tag": "0000_restore_self_scoped_role_helpers",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790579780958,
+      "tag": "0001_trial_pack_signup_credits",
+      "breakpoints": true
     }
   ]
 }

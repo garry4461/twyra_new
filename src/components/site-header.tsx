@@ -22,7 +22,7 @@ const NAV = [
   { label: "Contact", to: "/contact" as const },
 ];
 
-const PROMO = "Sign up offer · Get 10 free credits";
+const PROMO = "Buy 10 Get 10 · 10 free credits for all new sign ups — activated instantly";
 
 export function PromoTicker() {
   const items = Array.from({ length: 12 });
