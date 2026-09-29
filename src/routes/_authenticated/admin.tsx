@@ -19,7 +19,7 @@ interface JobRow {
   id: string; job_reference: string | null; job_type: number; status: string;
   created_at: string; customer_id: string; credits_used: number; notify_email: string;
 }
-interface UserRow { id: string; email: string | null; full_name: string | null; plan_type: string; credits_balance: number; }
+interface UserRow { id: string; email: string | null; full_name: string | null; plan_type: string; credits_balance: number; phone: string | null; plan_name: string | null; created_at: string; }
 
 function Admin() {
   const session = useSession();
@@ -40,7 +40,7 @@ function Admin() {
   const load = async () => {
     const [{ data: js }, { data: us }] = await Promise.all([
       supabase.from("jobs").select("id, job_reference, job_type, job_category, status, created_at, customer_id, credits_used, notify_email").order("created_at", { ascending: false }).limit(100),
-      supabase.from("profiles").select("id, email, full_name, plan_type, credits_balance").order("created_at", { ascending: false }),
+      supabase.from("profiles").select("id, email, full_name, plan_type, credits_balance, phone, plan_name, created_at").order("created_at", { ascending: false }),
     ]);
     setJobs((js ?? []) as JobRow[]);
     setUsers((us ?? []) as UserRow[]);
