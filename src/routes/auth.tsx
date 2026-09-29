@@ -75,7 +75,7 @@ function newCaptcha() {
 
 function AuthPage() {
   const { mode: initialMode } = Route.useSearch();
-  const [mode, setMode] = useState<"signin" | "signup">(initialMode ?? "signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">(initialMode ?? "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -106,6 +106,15 @@ function AuthPage() {
     e.preventDefault();
     setLoading(true);
     try {
+      if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) throw error;
+        toast.success("Password reset link sent — please check your email inbox.");
+        setMode("signin");
+        return;
+      }
       if (mode === "signup") {
         if (Number(captchaAnswer) !== captcha.a + captcha.b) {
           toast.error("Security check answer is incorrect. Please try again.");
