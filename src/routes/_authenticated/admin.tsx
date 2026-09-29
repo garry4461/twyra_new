@@ -19,7 +19,7 @@ interface JobRow {
   id: string; job_reference: string | null; job_type: number; status: string;
   created_at: string; customer_id: string; credits_used: number; notify_email: string;
 }
-interface UserRow { id: string; email: string | null; full_name: string | null; plan_type: string; credits_balance: number; }
+interface UserRow { id: string; email: string | null; full_name: string | null; plan_type: string; credits_balance: number; phone: string | null; plan_name: string | null; created_at: string; }
 
 function Admin() {
   const session = useSession();
@@ -40,7 +40,7 @@ function Admin() {
   const load = async () => {
     const [{ data: js }, { data: us }] = await Promise.all([
       supabase.from("jobs").select("id, job_reference, job_type, job_category, status, created_at, customer_id, credits_used, notify_email").order("created_at", { ascending: false }).limit(100),
-      supabase.from("profiles").select("id, email, full_name, plan_type, credits_balance").order("created_at", { ascending: false }),
+      supabase.from("profiles").select("id, email, full_name, plan_type, credits_balance, phone, plan_name, created_at").order("created_at", { ascending: false }),
     ]);
     setJobs((js ?? []) as JobRow[]);
     setUsers((us ?? []) as UserRow[]);
@@ -124,6 +124,48 @@ function Admin() {
           {filtered.length === 0 && <div className="p-6 text-sm text-muted-foreground">No jobs match this filter.</div>}
         </div>
       </Card>
+
+      {isAdmin && (
+        <Card>
+          <div className="p-6 border-b flex items-center justify-between">
+            <h2 className="font-semibold">Customers</h2>
+            <span className="text-sm text-muted-foreground">{users.length} sign-ups</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left text-muted-foreground">
+                  <th className="px-6 py-3 font-medium">Name</th>
+                  <th className="px-6 py-3 font-medium">Email</th>
+                  <th className="px-6 py-3 font-medium">Phone</th>
+                  <th className="px-6 py-3 font-medium">Plan</th>
+                  <th className="px-6 py-3 font-medium">Credits</th>
+                  <th className="px-6 py-3 font-medium">Signed up</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {users.map((u) => (
+                  <tr key={u.id} className="hover:bg-muted/50">
+                    <td className="px-6 py-3 font-medium">{u.full_name || "—"}</td>
+                    <td className="px-6 py-3 text-muted-foreground">{u.email || "—"}</td>
+                    <td className="px-6 py-3 text-muted-foreground">{u.phone || "—"}</td>
+                    <td className="px-6 py-3">
+                      {u.plan_type === "unlimited_monthly"
+                        ? `${u.plan_name || "Monthly"} · Unlimited`
+                        : u.plan_name || (u.plan_type === "credit" ? "FlexCredits" : "No plan")}
+                    </td>
+                    <td className="px-6 py-3">{u.plan_type === "unlimited_monthly" ? "∞" : u.credits_balance}</td>
+                    <td className="px-6 py-3 text-muted-foreground">{format(new Date(u.created_at), "PP")}</td>
+                  </tr>
+                ))}
+                {users.length === 0 && (
+                  <tr><td colSpan={6} className="px-6 py-6 text-muted-foreground">No customers yet.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
 
       {isAdmin && (
         <div className="grid md:grid-cols-2 gap-6">
