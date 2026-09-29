@@ -173,10 +173,14 @@ function AuthPage() {
           </Link>
 
           <h1 className="text-2xl font-bold mb-1">
-            {mode === "signin" ? "Sign in" : "Create your account"}
+            {mode === "signin" ? "Sign in" : mode === "signup" ? "Create your account" : "Reset your password"}
           </h1>
           <p className="text-sm text-muted-foreground mb-6">
-            {mode === "signin" ? "Access your artwork portal" : "Start submitting jobs today"}
+            {mode === "signin"
+              ? "Access your artwork portal"
+              : mode === "signup"
+                ? "Start submitting jobs today"
+                : "Enter your email and we'll send you a reset link."}
           </p>
           <form onSubmit={onSubmit} className="space-y-4">
             {mode === "signup" && (
@@ -244,7 +248,18 @@ function AuthPage() {
             )}
 
             <div>
-              <Label htmlFor="email">Email</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="email">Email</Label>
+                {mode === "signin" && (
+                  <button
+                    type="button"
+                    className="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
+                    onClick={() => setMode("forgot")}
+                  >
+                    Forgot password?
+                  </button>
+                )}
+              </div>
               <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
             <div>
