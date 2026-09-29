@@ -126,6 +126,48 @@ function Admin() {
       </Card>
 
       {isAdmin && (
+        <Card>
+          <div className="p-6 border-b flex items-center justify-between">
+            <h2 className="font-semibold">Customers</h2>
+            <span className="text-sm text-muted-foreground">{users.length} sign-ups</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left text-muted-foreground">
+                  <th className="px-6 py-3 font-medium">Name</th>
+                  <th className="px-6 py-3 font-medium">Email</th>
+                  <th className="px-6 py-3 font-medium">Phone</th>
+                  <th className="px-6 py-3 font-medium">Plan</th>
+                  <th className="px-6 py-3 font-medium">Credits</th>
+                  <th className="px-6 py-3 font-medium">Signed up</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {users.map((u) => (
+                  <tr key={u.id} className="hover:bg-muted/50">
+                    <td className="px-6 py-3 font-medium">{u.full_name || "—"}</td>
+                    <td className="px-6 py-3 text-muted-foreground">{u.email || "—"}</td>
+                    <td className="px-6 py-3 text-muted-foreground">{u.phone || "—"}</td>
+                    <td className="px-6 py-3">
+                      {u.plan_type === "unlimited_monthly"
+                        ? `${u.plan_name || "Monthly"} · Unlimited`
+                        : u.plan_name || (u.plan_type === "credit" ? "FlexCredits" : "No plan")}
+                    </td>
+                    <td className="px-6 py-3">{u.plan_type === "unlimited_monthly" ? "∞" : u.credits_balance}</td>
+                    <td className="px-6 py-3 text-muted-foreground">{format(new Date(u.created_at), "PP")}</td>
+                  </tr>
+                ))}
+                {users.length === 0 && (
+                  <tr><td colSpan={6} className="px-6 py-6 text-muted-foreground">No customers yet.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
+
+      {isAdmin && (
         <div className="grid md:grid-cols-2 gap-6">
           <Card className="p-6 space-y-3">
             <h3 className="font-semibold">Adjust credits / Grant role</h3>
