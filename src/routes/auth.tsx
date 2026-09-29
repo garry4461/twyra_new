@@ -75,7 +75,7 @@ function newCaptcha() {
 
 function AuthPage() {
   const { mode: initialMode } = Route.useSearch();
-  const [mode, setMode] = useState<"signin" | "signup">(initialMode ?? "signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">(initialMode ?? "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -106,6 +106,15 @@ function AuthPage() {
     e.preventDefault();
     setLoading(true);
     try {
+      if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) throw error;
+        toast.success("Password reset link sent — please check your email inbox.");
+        setMode("signin");
+        return;
+      }
       if (mode === "signup") {
         if (Number(captchaAnswer) !== captcha.a + captcha.b) {
           toast.error("Security check answer is incorrect. Please try again.");
@@ -164,10 +173,14 @@ function AuthPage() {
           </Link>
 
           <h1 className="text-2xl font-bold mb-1">
-            {mode === "signin" ? "Sign in" : "Create your account"}
+            {mode === "signin" ? "Sign in" : mode === "signup" ? "Create your account" : "Reset your password"}
           </h1>
           <p className="text-sm text-muted-foreground mb-6">
-            {mode === "signin" ? "Access your artwork portal" : "Start submitting jobs today"}
+            {mode === "signin"
+              ? "Access your artwork portal"
+              : mode === "signup"
+                ? "Start submitting jobs today"
+                : "Enter your email and we'll send you a reset link."}
           </p>
           <form onSubmit={onSubmit} className="space-y-4">
             {mode === "signup" && (
@@ -235,7 +248,18 @@ function AuthPage() {
             )}
 
             <div>
-              <Label htmlFor="email">Email</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="email">Email</Label>
+                {mode === "signin" && (
+                  <button
+                    type="button"
+                    className="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
+                    onClick={() => setMode("forgot")}
+                  >
+                    Forgot password?
+                  </button>
+                )}
+              </div>
               <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
             <div>
@@ -284,14 +308,24 @@ function AuthPage() {
             )}
 
             <Button type="submit" className="w-full bg-brand text-brand-foreground hover:bg-brand/90" disabled={loading}>
-              {loading ? "Please wait..." : mode === "signin" ? "Sign in" : "Create account"}
+              {loading
+                ? "Please wait..."
+                : mode === "signin"
+                  ? "Sign in"
+                  : mode === "signup"
+                    ? "Create account"
+                    : "Send reset link"}
             </Button>
           </form>
           <button
             className="mt-4 text-sm text-muted-foreground hover:text-foreground w-full text-center"
-            onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+            onClick={() => setMode(mode === "forgot" ? "signin" : mode === "signin" ? "signup" : "signin")}
           >
-            {mode === "signin" ? "Need an account? Sign up" : "Already have an account? Sign in"}
+            {mode === "signin"
+              ? "Need an account? Sign up"
+              : mode === "signup"
+                ? "Already have an account? Sign in"
+                : "Back to sign in"}
           </button>
         </Card>
 
