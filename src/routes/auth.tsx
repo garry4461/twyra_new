@@ -308,14 +308,24 @@ function AuthPage() {
             )}
 
             <Button type="submit" className="w-full bg-brand text-brand-foreground hover:bg-brand/90" disabled={loading}>
-              {loading ? "Please wait..." : mode === "signin" ? "Sign in" : "Create account"}
+              {loading
+                ? "Please wait..."
+                : mode === "signin"
+                  ? "Sign in"
+                  : mode === "signup"
+                    ? "Create account"
+                    : "Send reset link"}
             </Button>
           </form>
           <button
             className="mt-4 text-sm text-muted-foreground hover:text-foreground w-full text-center"
-            onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+            onClick={() => setMode(mode === "forgot" ? "signin" : mode === "signin" ? "signup" : "signin")}
           >
-            {mode === "signin" ? "Need an account? Sign up" : "Already have an account? Sign in"}
+            {mode === "signin"
+              ? "Need an account? Sign up"
+              : mode === "signup"
+                ? "Already have an account? Sign in"
+                : "Back to sign in"}
           </button>
         </Card>
 
