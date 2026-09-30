@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+Admin account provisioning uses a role-checked authenticated server function and loads privileged account tools only after authorization, because user creation must never be client-controlled.
