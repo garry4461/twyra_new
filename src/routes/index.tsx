@@ -39,6 +39,15 @@ import { toast } from "sonner";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
+import eatYourPhotoLogo from "@/assets/logos/eat-your-photo.png.asset.json";
+import featherFlagsLogo from "@/assets/logos/fether_flags.png.asset.json";
+import giraffeWorkwearLogo from "@/assets/logos/Giraffe_Workwear.png.asset.json";
+import premierLabelsLogo from "@/assets/logos/premier_labels.png.asset.json";
+import pressReadyPrintsLogo from "@/assets/logos/Print_ready_press.png.asset.json";
+import smarterImpressionsLogo from "@/assets/logos/Smarter_Impression.png.asset.json";
+import stickersAndThatLogo from "@/assets/logos/stickersandthat.png.asset.json";
+import whiteboxGoLogo from "@/assets/logos/whitebox-go.png.asset.json";
+
 
 const TITLE = "ArtworkGuru — Vector Art & Embroidery Digitizing Portal";
 const DESCRIPTION =
