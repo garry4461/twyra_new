@@ -42,6 +42,7 @@ import { SiteHeader } from "@/components/site-header";
 import eatYourPhotoLogo from "@/assets/logos/eat-your-photo.png.asset.json";
 import featherFlagsLogo from "@/assets/logos/fether_flags.png.asset.json";
 import giraffeWorkwearLogo from "@/assets/logos/Giraffe_Workwear.png.asset.json";
+import inkReadibleLogo from "@/assets/logos/inkreadible.png.asset.json";
 import premierLabelsLogo from "@/assets/logos/premier_labels.png.asset.json";
 import pressReadyPrintsLogo from "@/assets/logos/Print_ready_press.png.asset.json";
 import smarterImpressionsLogo from "@/assets/logos/Smarter_Impression.png.asset.json";
@@ -155,6 +156,7 @@ function TrustBar() {
     { name: "Eat Your Photo", src: eatYourPhotoLogo.url },
     { name: "Feather Flags UK", src: featherFlagsLogo.url },
     { name: "Giraffe Workwear", src: giraffeWorkwearLogo.url },
+    { name: "inkReadible Labels", src: inkReadibleLogo.url },
     { name: "Premier Labels", src: premierLabelsLogo.url },
     { name: "Press Ready Prints", src: pressReadyPrintsLogo.url },
     { name: "Smarter Impressions", src: smarterImpressionsLogo.url },
@@ -185,7 +187,7 @@ function TrustBar() {
                 alt={`${l.name} logo`}
                 title={l.name}
                 loading="lazy"
-                className="h-10 w-auto max-w-[180px] object-contain opacity-70 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 sm:h-12"
+                className="h-14 w-auto max-w-[240px] object-contain opacity-75 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 sm:h-16"
               />
             ))}
           </div>
