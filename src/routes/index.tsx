@@ -152,14 +152,14 @@ function Hero() {
 
 function TrustBar() {
   const logos = [
-    { name: "Eat Your Photo", src: eatYourPhotoLogo },
-    { name: "Feather Flags UK", src: featherFlagsLogo },
-    { name: "Giraffe Workwear", src: giraffeWorkwearLogo },
-    { name: "Premier Labels", src: premierLabelsLogo },
-    { name: "Press Ready Prints", src: pressReadyPrintsLogo },
-    { name: "Smarter Impressions", src: smarterImpressionsLogo },
-    { name: "Stickers & That", src: stickersAndThatLogo },
-    { name: "Whitebox Go", src: whiteboxGoLogo },
+    { name: "Eat Your Photo", src: eatYourPhotoLogo.url },
+    { name: "Feather Flags UK", src: featherFlagsLogo.url },
+    { name: "Giraffe Workwear", src: giraffeWorkwearLogo.url },
+    { name: "Premier Labels", src: premierLabelsLogo.url },
+    { name: "Press Ready Prints", src: pressReadyPrintsLogo.url },
+    { name: "Smarter Impressions", src: smarterImpressionsLogo.url },
+    { name: "Stickers & That", src: stickersAndThatLogo.url },
+    { name: "Whitebox Go", src: whiteboxGoLogo.url },
   ];
   const loop = [...logos, ...logos];
   return (
