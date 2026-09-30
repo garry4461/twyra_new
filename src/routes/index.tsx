@@ -39,6 +39,15 @@ import { toast } from "sonner";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
+import eatYourPhotoLogo from "@/assets/logos/eat-your-photo.png.asset.json";
+import featherFlagsLogo from "@/assets/logos/fether_flags.png.asset.json";
+import giraffeWorkwearLogo from "@/assets/logos/Giraffe_Workwear.png.asset.json";
+import premierLabelsLogo from "@/assets/logos/premier_labels.png.asset.json";
+import pressReadyPrintsLogo from "@/assets/logos/Print_ready_press.png.asset.json";
+import smarterImpressionsLogo from "@/assets/logos/Smarter_Impression.png.asset.json";
+import stickersAndThatLogo from "@/assets/logos/stickersandthat.png.asset.json";
+import whiteboxGoLogo from "@/assets/logos/whitebox-go.png.asset.json";
+
 
 const TITLE = "ArtworkGuru — Vector Art & Embroidery Digitizing Portal";
 const DESCRIPTION =
@@ -143,16 +152,14 @@ function Hero() {
 
 function TrustBar() {
   const logos = [
-    "PrintCo",
-    "MerchWorks",
-    "StitchLab",
-    "BrandForge",
-    "TeeHouse",
-    "PatchPro",
-    "InkHaus",
-    "ThreadLine",
-    "PixelPress",
-    "FoldCraft",
+    { name: "Eat Your Photo", src: eatYourPhotoLogo.url },
+    { name: "Feather Flags UK", src: featherFlagsLogo.url },
+    { name: "Giraffe Workwear", src: giraffeWorkwearLogo.url },
+    { name: "Premier Labels", src: premierLabelsLogo.url },
+    { name: "Press Ready Prints", src: pressReadyPrintsLogo.url },
+    { name: "Smarter Impressions", src: smarterImpressionsLogo.url },
+    { name: "Stickers & That", src: stickersAndThatLogo.url },
+    { name: "Whitebox Go", src: whiteboxGoLogo.url },
   ];
   const loop = [...logos, ...logos];
   return (
@@ -170,14 +177,16 @@ function TrustBar() {
               "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
           }}
         >
-          <div className="flex w-max animate-marquee gap-12 whitespace-nowrap will-change-transform">
+          <div className="flex w-max animate-marquee items-center gap-14 whitespace-nowrap will-change-transform">
             {loop.map((l, i) => (
-              <span
-                key={`${l}-${i}`}
-                className="text-sm font-bold tracking-tight text-muted-foreground/70"
-              >
-                {l}
-              </span>
+              <img
+                key={`${l.name}-${i}`}
+                src={l.src}
+                alt={`${l.name} logo`}
+                title={l.name}
+                loading="lazy"
+                className="h-10 w-auto max-w-[180px] object-contain opacity-70 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 sm:h-12"
+              />
             ))}
           </div>
         </div>
