@@ -7,3 +7,4 @@
 # Admin account provisioning
 - [x] Add an admin-only form to create customer and designer accounts with their profile details and initial password.
 - [x] Keep customer trial credits and ensure designer accounts receive only the designer role with no customer credit pack.
+- [x] Verify account creation and role assignment through the signed-in admin flow.
