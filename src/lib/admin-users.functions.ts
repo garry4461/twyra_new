@@ -55,15 +55,27 @@ export const createPortalAccount = createServerFn({ method: "POST" })
 
     if (data.role === "designer") {
       const userId = created.user.id;
-      const [{ error: roleError }, { error: profileError }, { error: creditsError }] = await Promise.all([
-        supabaseAdmin.from("user_roles").delete().eq("user_id", userId)
-          .then(async ({ error }) => error ? { error } : supabaseAdmin.from("user_roles").insert({ user_id: userId, role: "production" })),
-        supabaseAdmin.from("profiles").update({ plan_type: "none", plan_name: null, credits_balance: 0 }).eq("id", userId),
-        supabaseAdmin.from("credit_transactions").delete().eq("user_id", userId)
-          .eq("reason", "Welcome trial pack — 10 free credits"),
-      ]);
+      const { error: customerRoleError } = await supabaseAdmin
+        .from("user_roles")
+        .delete()
+        .eq("user_id", userId)
+        .eq("role", "customer");
+      const { error: designerRoleError } = customerRoleError
+        ? { error: customerRoleError }
+        : await supabaseAdmin.from("user_roles").insert({ user_id: userId, role: "production" });
+      const { error: profileError } = designerRoleError
+        ? { error: designerRoleError }
+        : await supabaseAdmin.from("profiles")
+            .update({ plan_type: "none", plan_name: null, credits_balance: 0 })
+            .eq("id", userId);
+      const { error: creditsError } = profileError
+        ? { error: profileError }
+        : await supabaseAdmin.from("credit_transactions")
+            .delete()
+            .eq("user_id", userId)
+            .eq("reason", "Welcome trial pack — 10 free credits");
 
-      if (roleError || profileError || creditsError) {
+      if (customerRoleError || designerRoleError || profileError || creditsError) {
         await supabaseAdmin.auth.admin.deleteUser(userId);
         throw new Error("The designer account could not be fully set up, so it was removed. Please try again.");
       }
