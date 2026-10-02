@@ -41,25 +41,29 @@ function loadMessages(): UIMessage[] {
 
 export function SupportChat() {
   const [open, setOpen] = useState(false);
-  
-  const [initialMessages] = useState<UIMessage[]>(() => loadMessages());
+  const [messagesHydrated, setMessagesHydrated] = useState(false);
   const [transport] = useState(() => new DefaultChatTransport({ api: "/api/chat" }));
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const { messages, sendMessage, status, setMessages, error } = useChat({
     id: "artworkguru-support",
-    messages: initialMessages,
     transport,
   });
 
   useEffect(() => {
+    setMessages(loadMessages());
+    setMessagesHydrated(true);
+  }, [setMessages]);
+
+  useEffect(() => {
+    if (!messagesHydrated) return;
     if (typeof window === "undefined") return;
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
     } catch {
       /* storage full or unavailable — chat still works for this session */
     }
-  }, [messages]);
+  }, [messages, messagesHydrated]);
 
   useEffect(() => {
     if (open && status !== "streaming") textareaRef.current?.focus();
