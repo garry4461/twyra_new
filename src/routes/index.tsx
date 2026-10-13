@@ -39,17 +39,6 @@ import { toast } from "sonner";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
-import eatYourPhotoLogo from "@/assets/logos/eat-your-photo.png.asset.json";
-import featherFlagsLogo from "@/assets/logos/fether_flags.png.asset.json";
-import giraffeWorkwearLogo from "@/assets/logos/Giraffe_Workwear.png.asset.json";
-import inkReadibleLogo from "@/assets/logos/inkreadible.png.asset.json";
-import premierLabelsLogo from "@/assets/logos/premier_labels.png.asset.json";
-import pressReadyPrintsLogo from "@/assets/logos/Print_ready_press.png.asset.json";
-import smarterImpressionsLogo from "@/assets/logos/Smarter_Impression.png.asset.json";
-import stickersAndThatLogo from "@/assets/logos/stickersandthat.png.asset.json";
-import whiteboxGoLogo from "@/assets/logos/whitebox-go.png.asset.json";
-
-
 const TITLE = "ArtworkGuru — Vector Art & Embroidery Digitizing Portal";
 const DESCRIPTION =
   "Unlimited design for print & merch companies. Vector art, digitizing and mockups in 12–24 hours with monthly plans or FlexCredits.";
@@ -153,15 +142,14 @@ function Hero() {
 
 function TrustBar() {
   const logos = [
-    { name: "Eat Your Photo", src: eatYourPhotoLogo.url },
-    { name: "Feather Flags UK", src: featherFlagsLogo.url },
-    { name: "Giraffe Workwear", src: giraffeWorkwearLogo.url },
-    { name: "inkReadible Labels", src: inkReadibleLogo.url },
-    { name: "Premier Labels", src: premierLabelsLogo.url },
-    { name: "Press Ready Prints", src: pressReadyPrintsLogo.url },
-    { name: "Smarter Impressions", src: smarterImpressionsLogo.url },
-    { name: "Stickers & That", src: stickersAndThatLogo.url },
-    { name: "Whitebox Go", src: whiteboxGoLogo.url },
+    { name: "Feather Flags UK", src: "/fether%20flags.png" },
+    { name: "Giraffe Workwear", src: "/Giraffe%20Workwear.png" },
+    { name: "inkReadible Labels", src: "/inkreadible.png" },
+    { name: "Premier Labels", src: "/premier%20labels.png" },
+    { name: "Press Ready Prints", src: "/Print%20ready%20press.png" },
+    { name: "Smarter Impressions", src: "/Smarter%20Impression.png" },
+    { name: "Stickers & That", src: "/stickersandthat.png" },
+    { name: "Whitebox Go", src: "/whitebox-go.png" },
   ];
   const loop = [...logos, ...logos];
   return (
